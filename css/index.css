@@ -26,37 +26,32 @@ body {
 }
 
 body.dark-theme {
-	--text-color: white;
-	--bkg-color: linear-gradient(to right, #434343, #000000);
+	color: white;
+	background: linear-gradient(to right, #434343, #000000);
 }
 
 body.light-theme {
-	--text-color: black;
-	--bkg-color: white;
+	color: black;
+	background: white;
+}
+
+.rounded {
+	display: table;
+    margin: 0 auto;
+	margin-bottom: 3rem;
+    text-align: center;
+    border-radius: 25px;
+	padding: 20px;
+    width: fit-content;
+    height: fit-content;
 }
 
 body.dark-theme .rounded{
-	display: table;
-    margin: 0 auto;
-	margin-bottom: 3rem;
-    text-align: center;
-    border-radius: 25px;
     border: 2px solid white;
-    padding: 20px;
-    width: fit-content;
-    height: fit-content;
 }
 
 body.light-theme .rounded{
-	display: table;
-    margin: 0 auto;
-	margin-bottom: 3rem;
-    text-align: center;
-    border-radius: 25px;
     border: 2px solid black;
-    padding: 20px;
-    width: fit-content;
-    height: fit-content;
 }
 
 h1 {
