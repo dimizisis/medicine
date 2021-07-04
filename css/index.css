@@ -298,16 +298,3 @@ h3 {
 		font-size: 1rem;
 	}
 }
-
-@media (prefers-color-scheme: dark) {
-
-	body { 
-	  --text-color: #eee;
-	  --bkg-color: linear-gradient(to right, #434343, #000000);
-	}
-
-	body.light-theme {
-	  --text-color: #222;
-	  --bkg-color: #fff;
-	}
-}
