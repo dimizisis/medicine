@@ -5,6 +5,10 @@
 	font-display: swap;
 }
 
+:root {
+	color-scheme: light dark; /* both supported */
+}
+
 html {
     background-repeat: no-repeat;
     background-attachment: fixed;
@@ -16,24 +20,35 @@ html {
 
 body {
 	--text-color: #222;
- 	--bkg-color: #fff;
+ 	--bkg-color: linear-gradient(to right, #FFFFFF, #FFEFBA);
     position: relative;
     min-height: 100%;
     font-family: "Source Sans Pro", sans-serif;
 	margin: 0px;
 }
 
-/* Dark theme colors */
 body.dark-theme {
-	--text-color: #eee;
-	--bkg-color: -webkit-linear-gradient(to right, #FFFFFF, #FFEFBA);
+	--text-color: white;
+	--bkg-color: linear-gradient(to right, #3f4c6b, #606c88);
+   position: relative;
+   min-height: 100%;
+   font-family: "Source Sans Pro", sans-serif;
+   margin: 0px;
 }
 
-:root {
-	color-scheme: light dark; /* both supported */
+body.dark-theme .rounded{
+	display: table;
+    margin: 0 auto;
+	margin-bottom: 3rem;
+    text-align: center;
+    border-radius: 25px;
+    border: 2px solid white;
+    padding: 20px;
+    width: fit-content;
+    height: fit-content;
 }
 
-.rounded {
+body .rounded {
     display: table;
     margin: 0 auto;
 	margin-bottom: 3rem;
@@ -41,12 +56,41 @@ body.dark-theme {
     border-radius: 25px;
     border: 2px solid #0E1119;
     padding: 20px;
-    width: 200px;
-    height: 150px;
+    width: fit-content;
+    height: fit-content;
 }
 
 .clickable {
 	cursor: pointer;
+}
+
+.button {
+	padding: 2rem;
+}
+
+.create-medicine-btn {
+	padding: 1rem;
+	width: 2rem;
+	height: 2rem;
+}
+
+input {
+    margin: 1rem;
+    text-align: center;
+}
+
+textarea {
+    height: 1rem;
+    resize: none;
+    white-space: nowrap;
+    overflow-x: hidden;
+    margin: 1rem;
+}
+
+#medicine-remakrs-txt {
+    resize: both;
+    white-space: normal;
+    overflow-x: visible;
 }
 
 #appicon > img {
@@ -54,13 +98,9 @@ body.dark-theme {
     height: 8rem;
 }
 
-#profiles > img {
+#medicine > img {
     width: 3rem;
     height: 3rem;
-}
-
-.button {
-	margin-bottom: 3rem;
 }
 
 .floating-btn {
@@ -504,13 +544,21 @@ th:hover {
 /* Styles for users who prefer dark mode at the OS level */
 @media (prefers-color-scheme: dark) {
 	/* defaults to dark theme */
-	body { 
-	  --text-color: #eee;
-	  --bkg-color: #121212;
+	body {
+		--text-color: #eee;
+		--bkg-color: linear-gradient(to right, #3f4c6b, #606c88);
+		position: relative;
+		min-height: 100%;
+		font-family: "Source Sans Pro", sans-serif;
+		margin: 0px;
 	}
 	/* Override dark mode with light mode styles if the user decides to swap */
 	body.light-theme {
-	  --text-color: #222;
-	  --bkg-color: #fff;
+		--text-color: #222;
+		--bkg-color: -webkit-linear-gradient(to right, #FFFFFF, #FFEFBA);
+	   position: relative;
+	   min-height: 100%;
+	   font-family: "Source Sans Pro", sans-serif;
+	   margin: 0px;
 	}
 }
