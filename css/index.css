@@ -18,22 +18,21 @@ html {
 	scroll-behavior: smooth;
 }
 
+body {
+	position: relative;
+	min-height: 100%;
+	font-family: "Source Sans Pro", sans-serif;
+	margin: 0px;
+}
+
 body.dark-theme {
 	--text-color: white;
 	--bkg-color: linear-gradient(to right, #434343, #000000);
-   position: relative;
-   min-height: 100%;
-   font-family: "Source Sans Pro", sans-serif;
-   margin: 0px;
 }
 
 body.light-theme {
-   background: white;
-   color: black;
-   position: relative;
-   min-height: 100%;
-   font-family: "Source Sans Pro", sans-serif;
-   margin: 0px;
+	--text-color: black;
+	--bkg-color: white;
 }
 
 body.dark-theme .rounded{
