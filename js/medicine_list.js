@@ -38,21 +38,45 @@ class Medicine {
 
 /** Creates table with user's medicine.
  */
-function displayMedicine() {
-    var allMedicineSection = createSection('Medicine', 'medicine', './assets/medicine.svg', 'profiles');
+function displayMedicine(sortBy = 'default') {
 
-    /* Insert infoSection AFTER cover */
-    document.getElementById('cover').parentNode.insertBefore(allMedicineSection, document.getElementById('cover').nextSibling);
-
+    var allMedicineSection = document.getElementById('medicine');
     var profile = getProfileInstance();
+    var sorted_medicine = profile.medicine;
+
+    if (sortBy === 'name') {
+        sorted_medicine.sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0));
+    } else if (sortBy === 'stockCount') {
+        sorted_medicine.sort((a, b) => (a.stockCount > b.stockCount) ? 1 : ((b.stockCount > a.stockCount) ? -1 : 0));
+    } else if (sortBy === 'date') {
+        sorted_medicine.sort((a, b) => (a.date > b.date) ? 1 : ((b.date > a.date) ? -1 : 0));
+    }
+
     if (profile != null) {
-        for (var medicine of profile.medicine) {
+        for (var medicine of sorted_medicine) {
             let medicineSection = createMedicineElement(medicine);
+            setTimeout(function () {
+                medicineSection.classList.add('visible');
+            }, 100);
             addDeleteButton(medicineSection, medicine.name);
             allMedicineSection.appendChild(medicineSection);
         }
     }
+}
 
+function deleteAllMedicineSection() {
+    var allMedicineSection = document.getElementById('medicine');
+    allMedicineSection.remove();
+}
+
+function deleteAddMedicineButton() {
+    var addMedicineButton = document.getElementById('add-medicine-img');
+    addMedicineButton.remove();
+}
+
+function createAddMedicineButton() {
+
+    var allMedicineSection = document.getElementById('medicine');
     let addMedicineImg = document.createElement('img');
     addMedicineImg.id = 'add-medicine-img'
     addMedicineImg.alt = 'add';
@@ -87,7 +111,7 @@ function prepareNewProfileList(newMedicineInstance) {
 }
 
 /**
- * Deletes profile data from local storage.
+ * Deletes medicine data from local storage.
  */
 function deleteMedicineFromLocalStorage(medicineName) {
     let profileLst = JSON.parse(localStorage.getItem('profiles'));
@@ -100,43 +124,40 @@ function deleteMedicineFromLocalStorage(medicineName) {
 }
 
 /**
- * Create new profile, given a profile object.
- * @param {Medicine} medicine - Profile's complete name
+ * Creates new medicine, given a medicine object.
+ * @param {Medicine} medicine - Medicine's complete name
  * 
  * @returns {Element} a div element (profile's new div)
  */
 function createMedicineElement(medicine) {
     var medicineDiv = document.createElement('div');
+    medicineDiv.classList.add('element');
     medicineDiv.classList.add('rounded');
 
     /* Medicine Name */
-    var medicineNameLabel = document.createElement('a');
+    var medicineNameLabel = document.createElement('label');
     medicineNameLabel.innerHTML = 'Name: ' + medicine.name;
-    medicineNameLabel.id = 'medicine-name-lbl';
-    // medicineNameLabel.href = 'medicine_list.html?profile=' + profile.name;
-    // medicineNameLabel.addEventListener('click', function () {
-    //     window.location.href = 'medicine_list.html?profile=' + profile.name;
-    // });
+    medicineNameLabel.classList.add('medicine-label');
 
     /* Expiration Date */
     var expirationDateLabel = document.createElement('label');
     expirationDateLabel.innerHTML = 'Expiration Date: ' + medicine.expirationDate;
-    expirationDateLabel.id = 'expiration-date-lbl';
+    expirationDateLabel.classList.add('medicine-label');
 
     /* Stock Count */
     var medicineStockCountLabel = document.createElement('label');
     medicineStockCountLabel.innerHTML = 'Stock Count: ' + medicine.stockCount;
-    medicineStockCountLabel.id = 'stock-count-lbl';
+    medicineStockCountLabel.classList.add('medicine-label');
 
     /* Medicine's Barcode */
     var barcodeLabel = document.createElement('label');
     barcodeLabel.innerHTML = 'Barcode: ' + medicine.barcode;
-    barcodeLabel.id = 'barcode-lbl';
+    barcodeLabel.classList.add('medicine-label');
 
     /* Medicine Remarks */
     var remarksLabel = document.createElement('label');
     remarksLabel.innerHTML = 'Remarks: ' + medicine.remarks;
-    remarksLabel.id = 'remarks-lbl';
+    remarksLabel.classList.add('medicine-label');
 
     medicineDiv.appendChild(medicineNameLabel);
     medicineDiv.appendChild(document.createElement('br'));
@@ -163,27 +184,106 @@ function addDeleteButton(medicineSection, medicineName) {
     medicineSection.appendChild(deleteMedicineButton);
 }
 
+function addSearchInput() {
+    var searchInput = document.createElement('input');
+    searchInput.name = 'search';
+    searchInput.id = 'search-input';
+    searchInput.setAttribute('type', 'search');
+    searchInput.classList.add('search-input');
+    searchInput.placeholder = 'Search for medicine...';
+
+    searchInput.addEventListener('keyup', search);
+
+    return searchInput;
+}
+
+function search() {
+    var medicineDivs, labels;
+    medicineDivs = document.getElementsByClassName('element rounded visible');
+    for (var i = 0; i < medicineDivs.length; ++i) {
+        labels = medicineDivs[i].getElementsByClassName('medicine-label');
+        if (isSearchResult(labels)) {
+            medicineDivs[i].style.display = '';
+        } else {
+            medicineDivs[i].style.display = 'none';
+        }
+    }
+}
+
+function isSearchResult(labels, filter) {
+    var textValue, filter, input;
+    input = document.getElementById('search-input');
+    filter = input.value.toUpperCase();
+    for (var j = 0; j < labels.length; ++j) {
+        textValue = labels[j].textContent.toUpperCase() || labels[i].innerText.toUpperCase();
+        if (textValue.indexOf(filter) > -1) {
+            return true;
+        }
+    }
+}
+
+function createSortByElements(index = 0) {
+    var sortByDiv = document.createElement('div');
+    sortByDiv.classList.add('sort-by-div');
+    var sortByLabel = document.createElement('label');
+    sortByLabel.innerHTML = 'Sort By: ';
+
+    var dropDownSortBy = document.createElement('select');
+    var name = document.createElement('option');
+    name.value = 'name';
+    name.innerHTML = 'Name';
+    var date = document.createElement('option');;
+    date.value = 'date';
+    date.innerHTML = 'Date';
+    var stockCount = document.createElement('option');
+    stockCount.value = 'stockCount';
+    stockCount.innerHTML = 'Stock Count';
+    dropDownSortBy.options.add(name);
+    dropDownSortBy.options.add(date);
+    dropDownSortBy.options.add(stockCount);
+
+    dropDownSortBy.selectedIndex = index;
+
+    dropDownSortBy.addEventListener('change', function (e) {
+        deleteAddMedicineButton();
+        deleteAllMedicineSection();
+        document.getElementById('cover').parentNode.insertBefore(createSection('Medicine', 'medicine', './assets/medicine.svg', 'profiles'), document.getElementById('cover').nextSibling);
+        document.getElementById('medicine').appendChild(createSortByElements(this.selectedIndex));
+        displayMedicine(this.value);
+        createAddMedicineButton();
+    });
+
+    sortByDiv.appendChild(sortByLabel);
+    sortByDiv.appendChild(dropDownSortBy);
+
+    return sortByDiv;
+}
+
 /**
- * Shows medicine creation div when user clicks the add profile button.
+ * Shows medicine creation div when user clicks the add medicine button.
  */
 function showCreateMedicineSection() {
     var newMedicineDiv = document.createElement('div');
+    newMedicineDiv.classList.add('element');
     newMedicineDiv.classList.add('rounded');
 
     /* Medicine Name */
     var nameTextArea = document.createElement('textarea');
+    nameTextArea.classList.add('info-textarea');
     nameTextArea.placeholder = 'Medicine Name';
     nameTextArea.id = 'medicine-name-txt';
     nameTextArea.wrap = 'off';
 
     /* Expiration Date */
     var expirationDateInput = document.createElement('input');
+    expirationDateInput.classList.add('info-textarea');
     expirationDateInput.setAttribute('type', 'date');
     expirationDateInput.setAttribute('value', new Date());
     expirationDateInput.id = 'medicine-expiration-input';
 
     /* Stock Count */
     var medicineStockCountInput = document.createElement('input');
+    medicineStockCountInput.classList.add('info-textarea');
     medicineStockCountInput.setAttribute('type', 'number');
     medicineStockCountInput.setAttribute('value', 1);
     medicineStockCountInput.min = 1;
@@ -191,6 +291,7 @@ function showCreateMedicineSection() {
 
     /* Medicine's Barcode */
     var barcodeInput = document.createElement('textarea');
+    barcodeInput.classList.add('info-textarea');
     barcodeInput.placeholder = 'Barcode';
     barcodeInput.id = 'medicine-barcode-txt';
 
@@ -208,6 +309,9 @@ function showCreateMedicineSection() {
         let medicine = new Medicine(nameTextArea.value, expirationDateInput.value, medicineStockCountInput.value, barcodeInput.value, remarksTextArea.value);
         let medicineElement = createMedicineElement(medicine);
         document.getElementById('add-medicine-img').parentNode.insertBefore(medicineElement, document.getElementById('add-medicine-img'));
+        setTimeout(function () {
+            medicineElement.classList.add('visible');
+        }, 150);
         saveMedicineToLocalStorage(medicine);
         newMedicineDiv.remove();
         addDeleteButton(medicineElement, nameTextArea.value);
@@ -231,8 +335,10 @@ function showCreateMedicineSection() {
     newMedicineDiv.appendChild(document.createElement('br'));
     newMedicineDiv.appendChild(buttonDiv);
     document.getElementById('add-medicine-img').parentNode.insertBefore(newMedicineDiv, document.getElementById('add-medicine-img'));
+    setTimeout(function () {
+        newMedicineDiv.classList.add('visible');
+    }, 50);
 }
-
 
 function getProfileInstance() {
     if (getProfileName() === '')
@@ -276,5 +382,8 @@ function createSection(headerStr, id, categoryIconSrc, categoryIconAltTxt) {
 
     return section;
 }
-
+window.addEventListener('load', function () { document.getElementById('cover').parentNode.insertBefore(createSection('Medicine', 'medicine', './assets/medicine.svg', 'profiles'), document.getElementById('cover').nextSibling); });
+window.addEventListener('load', function () { document.getElementById('medicine').appendChild(addSearchInput()); });
+window.addEventListener('load', function () { document.getElementById('medicine').appendChild(createSortByElements()); });
 window.addEventListener('load', displayMedicine);
+window.addEventListener('load', createAddMedicineButton);

@@ -107,7 +107,6 @@ function createProfileElement(profile) {
     var profileNameLabel = document.createElement('a');
     profileNameLabel.classList.add('create-profile-labels');
     profileNameLabel.innerHTML = 'Profile Name: '.bold() + profile.name;
-    profileNameLabel.id = 'profile-name-lbl';
     profileNameLabel.href = 'medicine_list.html?profile=' + profile.name;
     profileNameLabel.addEventListener('click', function () {
         window.location.href = 'medicine_list.html?profile=' + profile.name;
@@ -115,17 +114,14 @@ function createProfileElement(profile) {
 
     var totalMedicineLabel = document.createElement('label');
     totalMedicineLabel.innerHTML = 'Total Medicine: '.bold() + profile.medicine.length;
-    totalMedicineLabel.id = 'total-medicine-count-lbl';
     totalMedicineLabel.classList.add('create-profile-labels');
 
     var createdLabel = document.createElement('label');
     createdLabel.innerHTML = 'Created: '.bold() + profile.createDate;
-    createdLabel.id = 'profile-created-lbl';
     createdLabel.classList.add('create-profile-labels');
 
     var lastUpdatedLabel = document.createElement('label');
     lastUpdatedLabel.innerHTML = 'Last Updated: '.bold() + profile.lastUpdated;
-    lastUpdatedLabel.id = 'profile-last-updated-lbl';
     lastUpdatedLabel.classList.add('create-profile-labels');
 
     profileDiv.appendChild(profileNameLabel);
@@ -153,8 +149,9 @@ function addDeleteButton(profileSection, profileName) {
  */
 function showCreateProfileSection() {
     var newProfileDiv = document.createElement('div');
-    newProfileDiv.classList.add('element');
     newProfileDiv.classList.add('rounded');
+    newProfileDiv.classList.add('element');
+    newProfileDiv.classList.add('visible');
     var textArea = document.createElement('textarea');
     textArea.placeholder = 'Profile Name';
     textArea.id = 'profile-name-txt';
@@ -166,6 +163,9 @@ function showCreateProfileSection() {
     okImg.addEventListener('click', function () {
         let newProfile = createProfileElement(new UserProfile(textArea.value, 0));
         document.getElementById('add-profile-img').parentNode.insertBefore(newProfile, document.getElementById('add-profile-img'));
+        setTimeout(function () {
+            newProfile.classList.add('visible');
+        }, 150);
         saveProfileToLocalStorage();
         newProfileDiv.remove();
         addDeleteButton(newProfile, textArea.value);
@@ -180,9 +180,6 @@ function showCreateProfileSection() {
     newProfileDiv.appendChild(textArea);
     newProfileDiv.appendChild(buttonDiv);
     document.getElementById('add-profile-img').parentNode.insertBefore(newProfileDiv, document.getElementById('add-profile-img'));
-    setTimeout(function () {
-        newProfileDiv.classList.add('visible');
-    }, 100);
 }
 
 /**

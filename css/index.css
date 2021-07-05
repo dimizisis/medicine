@@ -110,20 +110,9 @@ body.light-theme h2 {
 	height: 2rem;
 }
 
-.create-medicine-btn {
-	padding-top: 1rem;
-	width: 2rem;
-	height: 2rem;
-}
-
 #appicon > img {
     width: 8rem;
     height: 8rem;
-}
-
-#medicines > img {
-    width: 3rem;
-    height: 3rem;
 }
 
 #profiles > img {
@@ -281,16 +270,7 @@ h3 {
 }
 
 @media all and (max-width: 1030px) {
-	table {
-		width: 90%;
-	}
-	table th, table td {
-	  font-size: smaller;
-	}
-	#chartdiv {
-		width: 90%;
-		font-size: smaller;
-	}
+	
 }
 
 @media all and (max-width: 250px) {
