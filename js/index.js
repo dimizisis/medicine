@@ -106,7 +106,8 @@ function createProfileElement(profile) {
 
     var profileNameLabel = document.createElement('a');
     profileNameLabel.classList.add('create-profile-labels');
-    profileNameLabel.innerHTML = 'Profile Name: '.bold() + profile.name;
+    profileNameLabel.classList.add('profile-name');
+    profileNameLabel.innerHTML = profile.name;
     profileNameLabel.href = 'medicine_list.html?profile=' + profile.name;
     profileNameLabel.addEventListener('click', function () {
         window.location.href = 'medicine_list.html?profile=' + profile.name;
@@ -155,6 +156,7 @@ function showCreateProfileSection() {
     var textArea = document.createElement('textarea');
     textArea.placeholder = 'Profile Name';
     textArea.id = 'profile-name-txt';
+    textArea.classList.add('info-textarea');
     var buttonDiv = document.createElement('div');
     var okImg = document.createElement('img');
     okImg.src = './assets/ok.svg';
@@ -210,7 +212,17 @@ function createSection(headerStr, id, categoryIconSrc, categoryIconAltTxt) {
     return section;
 }
 
-const btn = document.getElementById('chk');
+function setTheme() {
+    if (localStorage.getItem('theme') === 'light-theme') {
+        document.body.classList.remove('dark-theme');
+        document.body.classList.add('light-theme');
+    } else {
+        document.body.classList.remove('light-theme');
+        document.body.classList.add('dark-theme');
+    }
+}
+
+const btn = document.getElementById('change-theme-img');
 
 // Check for dark mode preference at the OS level
 const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
@@ -229,18 +241,23 @@ if (currentTheme == 'dark') {
 }
 
 // Listen for a click on the button 
-btn.addEventListener('change', function () {
+btn.addEventListener('click', function () {
     // If the OS is set to dark mode...
     if (document.body.classList.contains('dark-theme')) {
         // ...then apply the .light-theme class to override those styles
-        document.body.classList.remove('dark-theme')
+        document.body.classList.remove('dark-theme');
         document.body.classList.add('light-theme');
+        this.src = 'assets/dark.svg';
+        localStorage.setItem('theme', 'light-theme');
         // Otherwise...
     } else {
         // ...apply the .dark-theme class to override the default light styles
         document.body.classList.remove('light-theme');
         document.body.classList.add('dark-theme');
+        this.src = 'assets/light.svg';
+        localStorage.setItem('theme', 'dark-theme');
     }
-}); 
+});
 
+window.addEventListener('load', setTheme);
 window.addEventListener('load', displayProfiles);

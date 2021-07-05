@@ -1,5 +1,7 @@
 'use strict';
 
+//import Quagga from 'quagga';
+
 /** Class representing a drug (medicine). */
 class Medicine {
     /**
@@ -89,7 +91,7 @@ function createAddMedicineButton() {
 }
 
 /**
- * Saves profile data to local storage properly.
+ * Saves medicine data to local storage properly.
  */
 function saveMedicineToLocalStorage(medicine) {
     var profileLst = prepareNewProfileList(medicine);
@@ -136,7 +138,8 @@ function createMedicineElement(medicine) {
 
     /* Medicine Name */
     var medicineNameLabel = document.createElement('label');
-    medicineNameLabel.innerHTML = 'Name: ' + medicine.name;
+    medicineNameLabel.innerHTML = medicine.name;
+    medicineNameLabel.classList.add('medicine-name');
     medicineNameLabel.classList.add('medicine-label');
 
     /* Expiration Date */
@@ -160,13 +163,9 @@ function createMedicineElement(medicine) {
     remarksLabel.classList.add('medicine-label');
 
     medicineDiv.appendChild(medicineNameLabel);
-    medicineDiv.appendChild(document.createElement('br'));
     medicineDiv.appendChild(expirationDateLabel);
-    medicineDiv.appendChild(document.createElement('br'));
     medicineDiv.appendChild(medicineStockCountLabel);
-    medicineDiv.appendChild(document.createElement('br'));
     medicineDiv.appendChild(barcodeLabel);
-    medicineDiv.appendChild(document.createElement('br'));
     medicineDiv.appendChild(remarksLabel);
 
     return medicineDiv;
@@ -193,6 +192,7 @@ function addSearchInput() {
     searchInput.placeholder = 'Search for medicine...';
 
     searchInput.addEventListener('keyup', search);
+    searchInput.addEventListener('input', search);
 
     return searchInput;
 }
@@ -247,7 +247,8 @@ function createSortByElements(index = 0) {
     dropDownSortBy.addEventListener('change', function (e) {
         deleteAddMedicineButton();
         deleteAllMedicineSection();
-        document.getElementById('cover').parentNode.insertBefore(createSection('Medicine', 'medicine', './assets/medicine.svg', 'profiles'), document.getElementById('cover').nextSibling);
+        document.getElementById('cover').parentNode.insertBefore(createSection('Medicine List', 'medicine', './assets/medicine.svg', 'medicine'), document.getElementById('cover').nextSibling);
+        document.getElementById('medicine').appendChild(addSearchInput());
         document.getElementById('medicine').appendChild(createSortByElements(this.selectedIndex));
         displayMedicine(this.value);
         createAddMedicineButton();
@@ -299,6 +300,7 @@ function showCreateMedicineSection() {
     var remarksTextArea = document.createElement('textarea');
     remarksTextArea.placeholder = 'Remarks';
     remarksTextArea.id = 'medicine-remakrs-txt';
+    remarksTextArea.classList.add('info-textarea');
 
     var buttonDiv = document.createElement('div');
     var okImg = document.createElement('img');
@@ -355,6 +357,16 @@ function getProfileName() {
     return window.location.href.split('profile=')[1];
 }
 
+function setTheme() {
+    if (localStorage.getItem('theme') === 'light-theme') {
+        document.body.classList.remove('dark-theme');
+        document.body.classList.add('light-theme');
+    } else {
+        document.body.classList.remove('light-theme');
+        document.body.classList.add('dark-theme');
+    }
+}
+
 /**
  * Creates a section, along with its header
  * and icon.
@@ -382,7 +394,9 @@ function createSection(headerStr, id, categoryIconSrc, categoryIconAltTxt) {
 
     return section;
 }
-window.addEventListener('load', function () { document.getElementById('cover').parentNode.insertBefore(createSection('Medicine', 'medicine', './assets/medicine.svg', 'profiles'), document.getElementById('cover').nextSibling); });
+
+window.addEventListener('load', setTheme);
+window.addEventListener('load', function () { document.getElementById('cover').parentNode.insertBefore(createSection('Medicine List', 'medicine', './assets/medicine.svg', 'profiles'), document.getElementById('cover').nextSibling); });
 window.addEventListener('load', function () { document.getElementById('medicine').appendChild(addSearchInput()); });
 window.addEventListener('load', function () { document.getElementById('medicine').appendChild(createSortByElements()); });
 window.addEventListener('load', displayMedicine);
