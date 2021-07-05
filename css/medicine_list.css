@@ -123,6 +123,7 @@ select {
     border-radius: 25px;
     width: fit-content;
     height: fit-content;
+	display: inline-flex;
 }
 
 body.light-theme select {
@@ -171,11 +172,25 @@ h3 {
 	resize: both;
 }
 
+label {
+	padding-top: 1rem;
+}
+
+#medicine-barcode-txt {
+	margin-right: 1rem;
+}
+
+#barcode-scan-btn {
+	cursor: pointer;
+	width: 1.5rem;
+	height: 1.5rem;
+}
+
 .info-textarea {
-	display: block;
+	/* display: block; */
 	overflow: hidden;
 	resize: none;
-	margin: 1rem;
+	margin-left: 1rem;
 	height: 1rem;
 	text-align: center;
 }
@@ -215,6 +230,22 @@ body.light-theme .search-input {
 .medicine-label {
 	display: block;
 	padding: 1rem;
+}
+
+#scanner-container {
+	padding: 0 auto;
+	display: block;
+	align-items: center;
+    text-align: center;
+}
+
+#new-medicine-div {
+	display: table;
+	align-items: center;
+}
+
+.create-med-lbl {
+	display: flex;
 }
 
 /* Tooltip container */

@@ -144,22 +144,22 @@ function createMedicineElement(medicine) {
 
     /* Expiration Date */
     var expirationDateLabel = document.createElement('label');
-    expirationDateLabel.innerHTML = 'Expiration Date: ' + medicine.expirationDate;
+    expirationDateLabel.innerHTML = 'Expiration Date: '.bold() + medicine.expirationDate;
     expirationDateLabel.classList.add('medicine-label');
 
     /* Stock Count */
     var medicineStockCountLabel = document.createElement('label');
-    medicineStockCountLabel.innerHTML = 'Stock Count: ' + medicine.stockCount;
+    medicineStockCountLabel.innerHTML = 'Stock Count: '.bold() + medicine.stockCount;
     medicineStockCountLabel.classList.add('medicine-label');
 
     /* Medicine's Barcode */
     var barcodeLabel = document.createElement('label');
-    barcodeLabel.innerHTML = 'Barcode: ' + medicine.barcode;
+    barcodeLabel.innerHTML = 'Barcode: '.bold() + medicine.barcode;
     barcodeLabel.classList.add('medicine-label');
 
     /* Medicine Remarks */
     var remarksLabel = document.createElement('label');
-    remarksLabel.innerHTML = 'Remarks: ' + medicine.remarks;
+    remarksLabel.innerHTML = 'Remarks: '.bold() + medicine.remarks;
     remarksLabel.classList.add('medicine-label');
 
     medicineDiv.appendChild(medicineNameLabel);
@@ -260,6 +260,8 @@ function createSortByElements(index = 0) {
     return sortByDiv;
 }
 
+var _scannerIsRunning = false;
+
 /**
  * Shows medicine creation div when user clicks the add medicine button.
  */
@@ -267,45 +269,81 @@ function showCreateMedicineSection() {
     var newMedicineDiv = document.createElement('div');
     newMedicineDiv.classList.add('element');
     newMedicineDiv.classList.add('rounded');
+    newMedicineDiv.id = 'new-medicine-div';
 
     /* Medicine Name */
+    var nameLabel = document.createElement('label');
+    nameLabel.classList.add('create-med-lbl');
+    nameLabel.innerHTML = 'Medicine Name: '.bold();
     var nameTextArea = document.createElement('textarea');
     nameTextArea.classList.add('info-textarea');
     nameTextArea.placeholder = 'Medicine Name';
     nameTextArea.id = 'medicine-name-txt';
     nameTextArea.wrap = 'off';
+    nameLabel.appendChild(nameTextArea);
 
     /* Expiration Date */
+    var expirationDateLabel = document.createElement('label');
+    expirationDateLabel.classList.add('create-med-lbl');
+    expirationDateLabel.innerHTML = 'Expiration Date: '.bold();
     var expirationDateInput = document.createElement('input');
     expirationDateInput.classList.add('info-textarea');
     expirationDateInput.setAttribute('type', 'date');
     expirationDateInput.setAttribute('value', new Date());
     expirationDateInput.id = 'medicine-expiration-input';
+    expirationDateLabel.appendChild(expirationDateInput);
 
     /* Stock Count */
+    var medicineStockCountLabel = document.createElement('label');
+    medicineStockCountLabel.classList.add('create-med-lbl');
+    medicineStockCountLabel.innerHTML = 'Stock Count: '.bold();
     var medicineStockCountInput = document.createElement('input');
     medicineStockCountInput.classList.add('info-textarea');
     medicineStockCountInput.setAttribute('type', 'number');
     medicineStockCountInput.setAttribute('value', 1);
     medicineStockCountInput.min = 1;
     medicineStockCountInput.id = 'medicine-stock-count-input';
+    medicineStockCountLabel.appendChild(medicineStockCountInput);
 
     /* Medicine's Barcode */
+    var barcodeLabel = document.createElement('label');
+    barcodeLabel.classList.add('create-med-lbl');
+    barcodeLabel.innerHTML = 'Barcode: '.bold();
     var barcodeInput = document.createElement('textarea');
     barcodeInput.classList.add('info-textarea');
     barcodeInput.placeholder = 'Barcode';
     barcodeInput.id = 'medicine-barcode-txt';
-    var barcodeScanButton = document.createElement('input');
-    barcodeScanButton.setAttribute('type', 'button');
+    barcodeLabel.appendChild(barcodeInput);
+    var barcodeScanButton = document.createElement('img');
     barcodeScanButton.id = 'barcode-scan-btn';
-    barcodeScanButton.innerHTML = 'Scan';
-    barcodeScanButton.addEventListener('click', startScanner);
+    barcodeScanButton.src = './assets/scan.svg';
+    barcodeScanButton.addEventListener('click', function () {
+        if (!_scannerIsRunning) {
+            if (document.getElementById('scanner-container') === null) {
+                var cameraDiv = document.createElement('div');
+                cameraDiv.id = 'scanner-container';
+                document.getElementById('medicine-remakrs-txt').parentNode.insertBefore(cameraDiv, document.getElementById('medicine-remakrs-txt'));
+            } else {
+                document.getElementById('scanner-container').style.display = '';
+            }
+            startScanner();
+        } else {
+            Quagga.stop();
+            document.getElementById('scanner-container').style.display = 'none';
+            _scannerIsRunning = false;
+        }
+    });
+    barcodeLabel.appendChild(barcodeScanButton);
 
     /* Medicine Remarks */
+    var remarksLabel = document.createElement('label');
+    remarksLabel.classList.add('create-med-lbl');
+    remarksLabel.innerHTML = 'Remarks: '.bold();
     var remarksTextArea = document.createElement('textarea');
     remarksTextArea.placeholder = 'Remarks';
     remarksTextArea.id = 'medicine-remakrs-txt';
     remarksTextArea.classList.add('info-textarea');
+    remarksLabel.appendChild(remarksTextArea);
 
     var buttonDiv = document.createElement('div');
     var okImg = document.createElement('img');
@@ -327,23 +365,21 @@ function showCreateMedicineSection() {
     cancelImg.src = './assets/deny.svg';
     cancelImg.classList.add('create-medicine-btn');
     cancelImg.classList.add('clickable');
-    cancelImg.addEventListener('click', function () { newMedicineDiv.remove(); });
+    cancelImg.addEventListener('click', function () { newMedicineDiv.remove(); Quagga.stop(); });
     buttonDiv.appendChild(okImg);
     buttonDiv.appendChild(cancelImg);
-    newMedicineDiv.appendChild(nameTextArea);
-    newMedicineDiv.appendChild(expirationDateInput);
-    newMedicineDiv.appendChild(medicineStockCountInput);
-    newMedicineDiv.appendChild(barcodeInput);
-    newMedicineDiv.appendChild(barcodeScanButton);
-    newMedicineDiv.appendChild(remarksTextArea);
+    newMedicineDiv.appendChild(nameLabel);
+    newMedicineDiv.appendChild(expirationDateLabel);
+    newMedicineDiv.appendChild(medicineStockCountLabel);
+    newMedicineDiv.appendChild(barcodeLabel);
+    // newMedicineDiv.appendChild(barcodeScanButton);
+    newMedicineDiv.appendChild(remarksLabel);
     newMedicineDiv.appendChild(buttonDiv);
     document.getElementById('add-medicine-img').parentNode.insertBefore(newMedicineDiv, document.getElementById('add-medicine-img'));
     setTimeout(function () {
         newMedicineDiv.classList.add('visible');
     }, 50);
 }
-
-var _scannerIsRunning = false;
 
 function startScanner() {
     Quagga.init({
@@ -352,8 +388,8 @@ function startScanner() {
             type: 'LiveStream',
             target: document.querySelector('#scanner-container'),
             constraints: {
-                width: 480,
-                height: 320,
+                width: 380,
+                height: 220,
                 facingMode: 'environment'
             },
         },
@@ -399,27 +435,6 @@ function startScanner() {
     });
 
     Quagga.onProcessed(function (result) {
-        var drawingCtx = Quagga.canvas.ctx.overlay,
-        drawingCanvas = Quagga.canvas.dom.overlay;
-
-        if (result) {
-            if (result.boxes) {
-                drawingCtx.clearRect(0, 0, parseInt(drawingCanvas.getAttribute('width')), parseInt(drawingCanvas.getAttribute('height')));
-                result.boxes.filter(function (box) {
-                    return box !== result.box;
-                }).forEach(function (box) {
-                    Quagga.ImageDebug.drawPath(box, { x: 0, y: 1 }, drawingCtx, { color: 'green', lineWidth: 2 });
-                });
-            }
-
-            if (result.box) {
-                Quagga.ImageDebug.drawPath(result.box, { x: 0, y: 1 }, drawingCtx, { color: '#00F', lineWidth: 2 });
-            }
-
-            if (result.codeResult && result.codeResult.code) {
-                Quagga.ImageDebug.drawPath(result.line, { x: 'x', y: 'y' }, drawingCtx, { color: 'red', lineWidth: 3 });
-            }
-        }
     });
 
 
