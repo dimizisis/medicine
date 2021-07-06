@@ -27,12 +27,12 @@ body {
 
 body.dark-theme {
 	color: white;
-	background: linear-gradient(to right, #434343, #000000);
+	background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);;
 }
 
 body.light-theme {
-	color: black;
-	background: white;
+	color: rgb(129, 120, 120);
+	background: linear-gradient(to bottom, #83a4d4, #b6fbff);;
 }
 
 .rounded {
@@ -142,6 +142,8 @@ body.light-theme select {
 }
 
 .category-icon {
+	display: block;
+	margin: 0 auto;
 	padding-top: 2rem;
 	width: 3rem;
 	height: 3rem;
@@ -187,7 +189,6 @@ label {
 }
 
 .info-textarea {
-	/* display: block; */
 	overflow: hidden;
 	resize: none;
 	margin-left: 1rem;
@@ -215,19 +216,62 @@ body.light-theme .search-input {
 }
 
 .sort-by-div {
+	font-weight: bold;
 	margin: 0 auto;
 	display: table;
 	align-items: center;
 	padding: 2rem;
 }
 
-.medicine-name {
-	text-align: center;
-	font-weight: bold;
-	font-size: 2rem;
+body.dark-theme .sort-by-div {
+	color: white;
 }
 
-.medicine-label {
+body.light-theme .sort-by-div {
+	color: black;
+}
+
+.expired {
+	background: linear-gradient(to right, #e52d27, #b31217);
+}
+
+.expires-soon {
+	background: linear-gradient(to right, #f46b45, #eea849);
+}
+
+.ahead-of-expiration {
+	background: linear-gradient(to bottom, #11998e, #38ef7d);
+}
+
+.medicine-name {
+	color: white;
+	text-align: center;
+	font-weight: bold;
+	font-size: 1rem;
+	display: block;
+	padding: 1rem;
+}
+
+.expiration-date-label {
+	color: white;
+	display: block;
+	padding: 1rem;
+}
+
+.stock-label {
+	color: white;
+	display: block;
+	padding: 1rem;
+}
+
+.barcode-label {
+	color: white;
+	display: block;
+	padding: 1rem;
+}
+
+.remarks-label {
+	color: white;
 	display: block;
 	padding: 1rem;
 }
@@ -246,6 +290,14 @@ body.light-theme .search-input {
 
 .create-med-lbl {
 	display: flex;
+}
+
+.previous-btn {
+	width: 3rem;
+	height: 3rem;
+	float: left;
+	padding-top: 2rem;
+	padding-left: 2rem;
 }
 
 /* Tooltip container */

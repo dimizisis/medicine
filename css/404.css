@@ -1,0 +1,87 @@
+/* Typical properties start */
+@font-face {
+	font-family: "Source Sans Pro";
+	src: url("https://fonts.gstatic.com/s/sourcesanspro/v13/6xK3dSBYKcSV-LCoeQqfX1RYOo3qO67lqDY.woff2"), format("woff2");
+	font-display: swap;
+}
+
+:root {
+	color-scheme: light dark; /* both supported */
+}
+
+html {
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+    background-blend-mode: screen;
+    min-height: 100%;
+	scroll-behavior: smooth;
+}
+
+body {
+	position: relative;
+	min-height: 100%;
+	font-family: "Source Sans Pro", sans-serif;
+	margin: 0px;
+}
+
+body.dark-theme {
+	color: white;
+	background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);;
+}
+
+body.light-theme {
+	color: black;
+	background: linear-gradient(to bottom, #83a4d4, #b6fbff);;
+}
+
+#header {
+	align-items: center;
+	margin-top: 2rem;
+}
+
+h1 {
+	text-align: center;
+	font-size: 3rem;
+}
+
+h2 {
+	font-size: 2rem;
+	text-align: center;
+}
+
+h3 {
+	font-size: 1rem;
+	text-align: center;
+}
+
+body.dark-theme h1 {
+	color: white;
+}
+
+body.light-theme h1 {
+	color: black;
+}
+
+body.dark-theme h2 {
+	color: white;
+}
+
+body.light-theme h2 {
+	color: black;
+}
+
+body.dark-theme h3 {
+	color: white;
+}
+
+body.light-theme h3 {
+	color: black;
+}
+
+#placebo-img {
+    display: table;
+    margin: 0 auto;
+    width: 10rem;
+    height: 10rem;
+}

@@ -41,9 +41,9 @@ function displayProfiles() {
 
     var profileLst = JSON.parse(localStorage.getItem('profiles'));
     if (profileLst != null) {
-        console.log(profileLst);
         for (var profile of profileLst) {
             let profileSection = createProfileElement(profile);
+            addModifyButton(profileSection, profile.name);
             addDeleteButton(profileSection, profile.name);
             profilesSection.appendChild(profileSection);
             setTimeout(function () {
@@ -145,6 +145,18 @@ function addDeleteButton(profileSection, profileName) {
     profileSection.appendChild(deleteProfileButton);
 }
 
+function addModifyButton(profileSection, profileName) {
+    var modifyProfileButton = document.createElement('div');
+    modifyProfileButton.style.display = 'inline-block;';
+    var modifyImg = document.createElement('img');
+    modifyImg.src = './assets/edit.svg';
+    modifyImg.classList.add('create-profile-btn');
+    modifyImg.classList.add('clickable');
+    modifyImg.addEventListener('click', function () { });
+    modifyProfileButton.appendChild(modifyImg);
+    profileSection.appendChild(modifyProfileButton);
+}
+
 /**
  * Shows profile creation div when user clicks the add profile button.
  */
@@ -170,6 +182,7 @@ function showCreateProfileSection() {
         }, 150);
         saveProfileToLocalStorage();
         newProfileDiv.remove();
+        addModifyButton(newProfile, textArea.value);
         addDeleteButton(newProfile, textArea.value);
     });
     var cancelImg = document.createElement('img');
@@ -214,9 +227,11 @@ function createSection(headerStr, id, categoryIconSrc, categoryIconAltTxt) {
 
 function setTheme() {
     if (localStorage.getItem('theme') === 'light-theme') {
+        document.getElementById('change-theme-img').src = './assets/dark.svg';
         document.body.classList.remove('dark-theme');
         document.body.classList.add('light-theme');
     } else {
+        document.getElementById('change-theme-img').src = './assets/light.svg';
         document.body.classList.remove('light-theme');
         document.body.classList.add('dark-theme');
     }
