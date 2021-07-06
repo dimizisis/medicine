@@ -564,6 +564,7 @@ function createSection(headerStr, id, categoryIconSrc, categoryIconAltTxt) {
     return section;
 }
 
+document.getElementById('back-btn').addEventListener('click', function () { window.location.href = 'index.html'; });
 window.addEventListener('load', setTheme);
 window.addEventListener('load', function () { document.getElementById('cover').parentNode.insertBefore(createSection('Medicine List', 'medicine', './assets/medicine.svg', 'profiles'), document.getElementById('cover').nextSibling); });
 window.addEventListener('load', function () { document.getElementById('medicine').appendChild(addSearchInput()); });
