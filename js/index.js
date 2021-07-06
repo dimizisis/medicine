@@ -12,23 +12,6 @@ class UserProfile {
         this.lastUpdated = new Date(Date.now()).toLocaleString();
         this.medicine = [];
     }
-
-    /**
-      * Returns a string representation of the player's instance
-      */
-    toString() {
-        return this.name;
-    }
-
-    /**
-      * Creates a Map object with player's basic info.
-      * @returns {Map} a Map object
-      */
-    toKeyValuePair() {
-        let infoMap = new Map();
-        infoMap.set('Name', this.name);
-        return infoMap;
-    }
 }
 
 /** Creates table with user profiles.
@@ -70,10 +53,9 @@ function displayProfiles() {
  */
 function saveProfileToLocalStorage() {
     var profileName = document.getElementById('profile-name-txt');
-    console.log(profileName.value)
     if (profileName.value === '')
         return;
-    var profile = new UserProfile(profileName.value);
+    var profile = new UserProfile(profileName.value.replace(' ', '_'));
     var profileLst = JSON.parse(localStorage.getItem('profiles'));
     profileLst.push(profile);
     console.log(profileLst);

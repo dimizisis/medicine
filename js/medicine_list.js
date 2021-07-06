@@ -1,7 +1,5 @@
 'use strict';
 
-//import Quagga from 'quagga';
-
 /** Class representing a drug (medicine). */
 class Medicine {
     /**
@@ -20,25 +18,61 @@ class Medicine {
         this.remarks = remarks;
     }
 
-    /**
-      * Returns a string representation of the player's instance
-      */
-    toString() {
-        return this.name;
-    }
-
-    /**
-      * Creates a Map object with medicine's basic info.
-      * @returns {Map} a Map object
-      */
-    toKeyValuePair() {
-        let infoMap = new Map();
-        infoMap.set('Name', this.name);
-        return infoMap;
+    /** 
+     * Returns the medicine info to string (comma separated values)
+     * @returns {string} the medicine info to string
+     */
+    toStr() {
+        return this.name + ',' + this.expirationDate + ',' + this.stockCount + ',' + this.barcode + ',' + this.remarks;
     }
 }
 
-/** Creates table with user's medicine.
+/** 
+ * Convert an array into a CSV string
+ */
+function arrayToCsv(medicine) {
+    var csvStr = 'name,expirationDate,stockCount,barcode,remarks\n';
+    for (var m of getProfileInstance().medicine) {
+        csvStr += m.name + ',' + m.expirationDate + ',' + m.stockCount + ',' + m.barcode + ',' + m.remarks + '\n';
+    }
+    return csvStr;
+}
+
+function createImportExportDiv() {
+    var importExportDiv = document.createElement('div');
+    importExportDiv.classList.add('import-export-div');
+    var importA = document.createElement('a');
+    importA.id = 'import-a';
+    var importImg = document.createElement('img');
+    importImg.src = './assets/import.svg';
+    importImg.id = 'import-img';
+    importImg.classList.add('clickable');
+    importA.appendChild(importImg);
+
+    var exportA = document.createElement('a');
+    exportA.id = 'export-a';
+    var exportImg = document.createElement('img');
+    exportImg.src = './assets/export.svg';
+    exportImg.id = 'export-img';
+    exportImg.classList.add('clickable');
+    exportImg.addEventListener('click', downloadCSV);
+    exportA.appendChild(exportImg);
+
+    importExportDiv.appendChild(importImg);
+    importExportDiv.appendChild(exportA);
+
+    return importExportDiv;
+}
+
+function downloadCSV() {
+    var exportImg = document.getElementById('export-a');
+    exportImg.download = 'data.csv';
+    var blob = new Blob([arrayToCsv(getProfileInstance().medicine)], { type: 'text/csv;' });
+    exportImg.href = window.URL.createObjectURL(blob);
+}
+
+/** 
+ * Creates table with user's medicine.
  */
 function displayMedicine(sortBy = 'default') {
 
@@ -59,25 +93,34 @@ function displayMedicine(sortBy = 'default') {
             let medicineSection = createMedicineElement(medicine);
             setTimeout(function () {
                 medicineSection.classList.add('visible');
-                markMedicine(medicineSection);
+                markMedicineByExpirationDate(medicineSection);
             }, 100);
-            addModifyButton(medicineSection, medicine.name);
-            addDeleteButton(medicineSection, medicine.name);
+            createModifyButton(medicineSection);
+            createDeleteButton(medicineSection, medicine.name);
             allMedicineSection.appendChild(medicineSection);
         }
     }
 }
 
+/** 
+ * Deletes the section with all medicine (list).
+ */
 function deleteAllMedicineSection() {
     var allMedicineSection = document.getElementById('medicine');
     allMedicineSection.remove();
 }
 
+/** 
+ * Deletes 'add medicine' button.
+ */
 function deleteAddMedicineButton() {
     var addMedicineButton = document.getElementById('add-medicine-img');
     addMedicineButton.remove();
 }
 
+/** 
+ * Creates the 'add medicine' button.
+ */
 function createAddMedicineButton() {
     var allMedicineSection = document.getElementById('medicine');
     let addMedicineImg = document.createElement('img');
@@ -86,17 +129,25 @@ function createAddMedicineButton() {
     addMedicineImg.src = './assets/plus.svg';
     addMedicineImg.classList.add('button');
     addMedicineImg.classList.add('clickable');
-    addMedicineImg.addEventListener('click', showCreateMedicineSection);
+    addMedicineImg.addEventListener('click', function () { showCreateMedicineSection(); });
     allMedicineSection.appendChild(addMedicineImg);
 }
 
-function markMedicine(medicineSection) {
+/** 
+ * Marks each medicine accourding to their expiration date.
+ * Red: expired or expires today
+ * Yellow: expires soon
+ * Green: ahead of expiration time
+ * 
+ * @param {Element} medicineSection medicine to be marked
+ */
+function markMedicineByExpirationDate(medicineSection) {
     var expirationDate = new Date(medicineSection.getElementsByClassName('expiration-date-label')[0].innerText.replace('Expiration Date: ', ''));
-    if ((expirationDate.getTime() - getCurrentDate().getTime()) / (1000 * 3600 * 24) <= 0) {
+    if ((expirationDate.getTime() - new Date().getTime()) / (1000 * 3600 * 24) <= 0) {
         medicineSection.classList.remove('ahead-of-expiration');
         medicineSection.classList.remove('expires-soon');
         medicineSection.classList.add('expired');
-    } else if ((expirationDate.getTime() - getCurrentDate().getTime()) / (1000 * 3600 * 24) <= 7) {
+    } else if ((expirationDate.getTime() - new Date().getTime()) / (1000 * 3600 * 24) <= 7) {
         medicineSection.classList.remove('ahead-of-expiration');
         medicineSection.classList.remove('expired');
         medicineSection.classList.add('expires-soon');
@@ -107,11 +158,13 @@ function markMedicine(medicineSection) {
     }
 }
 
-function getCurrentDate() {
-    return new Date();
-}
-
-function modifyMedicineSection(medicineSection) {
+/** 
+ * Shows the medicine modification window.
+ * Triggered when the user clicks the modify button.
+ * 
+ * @param {Element} medicineSection medicine to be marked
+ */
+function showModificationWindow(medicineSection) {
     medicineSection.style.display = 'none';
     var name = medicineSection.getElementsByClassName('medicine-name')[0].innerText;
     var expirationDate = medicineSection.getElementsByClassName('expiration-date-label')[0].innerText.replace('Expiration Date: ', '');
@@ -129,9 +182,15 @@ function saveMedicineToLocalStorage(medicine) {
     localStorage.setItem('profiles', JSON.stringify(profileLst));
 }
 
+/** 
+ * Prepares the new profile list (along with all the medicine lists).
+ * Triggered when the user creates new medicine or modifies an existing one.
+ * 
+ * @param {Element} newMedicineInstance medicine instance to be upserted
+ * @returns {Array} the new profile list
+ */
 function prepareNewProfileList(newMedicineInstance) {
     var profileName = getProfileName();
-    console.log(profileName);
     var profileLst = JSON.parse(localStorage.getItem('profiles'));
     var newProfileLst = [...profileLst];
     for (var profile of newProfileLst) {
@@ -139,7 +198,6 @@ function prepareNewProfileList(newMedicineInstance) {
             profile.medicine = profile.medicine.map(m => m.barcode !== newMedicineInstance.barcode ? m : newMedicineInstance);
             for (var med of profile.medicine) {
                 if (med.barcode === newMedicineInstance.barcode) {
-                    console.log(newMedicineInstance.barcode);
                     med.name = newMedicineInstance.name;
                     med.expirationDate = newMedicineInstance.expirationDate;
                     med.stockCount = newMedicineInstance.stockCount;
@@ -211,7 +269,12 @@ function createMedicineElement(medicine) {
     return medicineDiv;
 }
 
-function addDeleteButton(medicineSection, medicineName) {
+/**
+ * Creates a delete button for existing medicine (section).
+ * @param {Element} medicineSection - Medicine's section
+ * @param {string} medicineName - Medicine's complete name
+ */
+function createDeleteButton(medicineSection, medicineName) {
     var deleteMedicineButton = document.createElement('div');
     deleteMedicineButton.style.display = 'inline-block;';
     var deleteImg = document.createElement('img');
@@ -223,19 +286,27 @@ function addDeleteButton(medicineSection, medicineName) {
     medicineSection.appendChild(deleteMedicineButton);
 }
 
-function addModifyButton(medicineSection, medicineName) {
+/**
+ * Creates a modification button for existing medicine (section).
+ * @param {Element} medicineSection - Medicine's section
+ */
+function createModifyButton(medicineSection) {
     var modifyMedicineButton = document.createElement('div');
     modifyMedicineButton.style.display = 'inline-block;';
     var modifyImg = document.createElement('img');
     modifyImg.src = './assets/edit.svg';
     modifyImg.classList.add('create-medicine-btn');
     modifyImg.classList.add('clickable');
-    modifyImg.addEventListener('click', function () { modifyMedicineSection(medicineSection); });
+    modifyImg.addEventListener('click', function () { showModificationWindow(medicineSection); });
     modifyMedicineButton.appendChild(modifyImg);
     medicineSection.appendChild(modifyMedicineButton);
 }
 
-function addSearchInput() {
+/**
+ * Creates a new search input (text area).
+ * @returns {Element} a search input element
+ */
+function createSearchInput() {
     var searchInput = document.createElement('input');
     searchInput.name = 'search';
     searchInput.id = 'search-input';
@@ -249,6 +320,9 @@ function addSearchInput() {
     return searchInput;
 }
 
+/**
+ * Performs search among medicine.
+ */
 function search() {
     var medicineDivs, labels;
     medicineDivs = document.getElementsByClassName('element rounded visible');
@@ -262,6 +336,12 @@ function search() {
     }
 }
 
+/**
+ * Checks if a medicine element is a search result
+ * based on a filter
+ * @param {Array} labels the labels within the medicine element
+ * @returns {boolean} true if the medicine must be returned as a search result, false otherwise.
+ */
 function isSearchResult(labels, filter) {
     var textValue, filter, input;
     input = document.getElementById('search-input');
@@ -274,6 +354,11 @@ function isSearchResult(labels, filter) {
     }
 }
 
+/**
+ * Creates a sort by div area.
+ * @param {int} index the starting index of dropdown list
+ * @returns {Element} sort by div area.
+ */
 function createSortByElements(index = 0) {
     var sortByDiv = document.createElement('div');
     sortByDiv.classList.add('sort-by-div');
@@ -300,7 +385,7 @@ function createSortByElements(index = 0) {
         deleteAddMedicineButton();
         deleteAllMedicineSection();
         document.getElementById('cover').parentNode.insertBefore(createSection('Medicine List', 'medicine', './assets/medicine.svg', 'medicine'), document.getElementById('cover').nextSibling);
-        document.getElementById('medicine').appendChild(addSearchInput());
+        document.getElementById('medicine').appendChild(createSearchInput());
         document.getElementById('medicine').appendChild(createSortByElements(this.selectedIndex));
         displayMedicine(this.value);
         createAddMedicineButton();
@@ -316,6 +401,13 @@ var _scannerIsRunning = false;
 
 /**
  * Shows medicine creation div when user clicks the add medicine button.
+ * Parameters are only needed when the function is triggered due to modification.
+ * @param {string} nameTxt medicine's full name
+ * @param {string} expirationDateTxt medicine's expiration date
+ * @param {int} stockCount medicine's stock count
+ * @param {string} barcodeTxt medicine's barcode
+ * @param {string} remarksTxt remarks' text
+ * @param {Element} editableMedicineDiv non null only when is triggered due to modification
  */
 function showCreateMedicineSection(nameTxt = '', expirationDateTxt = '', stockCount = 1, barcodeTxt = '', remarksTxt = '', editableMedicineDiv = null) {
     var newMedicineDiv = document.createElement('div');
@@ -331,8 +423,10 @@ function showCreateMedicineSection(nameTxt = '', expirationDateTxt = '', stockCo
     nameTextArea.classList.add('info-textarea');
     nameTextArea.id = 'medicine-name-txt';
     nameTextArea.wrap = 'off';
-    nameTextArea.innerText = nameTxt;
-    nameTextArea.value = nameTxt;
+    if (nameTxt !== '') {
+        nameTextArea.innerText = nameTxt;
+        nameTextArea.value = nameTxt;
+    }
     nameLabel.appendChild(nameTextArea);
 
     /* Expiration Date */
@@ -360,7 +454,6 @@ function showCreateMedicineSection(nameTxt = '', expirationDateTxt = '', stockCo
     medicineStockCountInput.innerHTML = stockCount;
     medicineStockCountInput.value = stockCount;
     medicineStockCountInput.id = 'medicine-stock-count-input';
-
     medicineStockCountLabel.appendChild(medicineStockCountInput);
 
     /* Medicine's Barcode */
@@ -371,21 +464,20 @@ function showCreateMedicineSection(nameTxt = '', expirationDateTxt = '', stockCo
     barcodeInput.classList.add('info-textarea');
     barcodeInput.innerHTML = barcodeTxt;
     barcodeInput.value = barcodeTxt;
-
     barcodeInput.id = 'medicine-barcode-txt';
     barcodeLabel.appendChild(barcodeInput);
+
     var barcodeScanButton = document.createElement('img');
     barcodeScanButton.id = 'barcode-scan-btn';
     barcodeScanButton.src = './assets/scan.svg';
+
+    var cameraDiv = document.createElement('div');
+    cameraDiv.id = 'scanner-container';
+    cameraDiv.style.display = 'none';
+
     barcodeScanButton.addEventListener('click', function () {
         if (!_scannerIsRunning) {
-            if (document.getElementById('scanner-container') === null) {
-                var cameraDiv = document.createElement('div');
-                cameraDiv.id = 'scanner-container';
-                document.getElementById('medicine-remakrs-txt').parentNode.insertBefore(cameraDiv, document.getElementById('medicine-remakrs-txt'));
-            } else {
-                document.getElementById('scanner-container').style.display = '';
-            }
+            cameraDiv.style.display = '';
             startScanner();
         } else {
             Quagga.stop();
@@ -399,6 +491,7 @@ function showCreateMedicineSection(nameTxt = '', expirationDateTxt = '', stockCo
     var remarksLabel = document.createElement('label');
     remarksLabel.classList.add('create-med-lbl');
     remarksLabel.innerHTML = 'Remarks: '.bold();
+    remarksLabel.id = 'remarks-lbl';
     var remarksTextArea = document.createElement('textarea');
     remarksTextArea.id = 'medicine-remakrs-txt';
     remarksTextArea.classList.add('info-textarea');
@@ -416,28 +509,46 @@ function showCreateMedicineSection(nameTxt = '', expirationDateTxt = '', stockCo
         let medicineElement = createMedicineElement(medicine);
         document.getElementById('add-medicine-img').parentNode.insertBefore(medicineElement, document.getElementById('add-medicine-img'));
         setTimeout(function () {
-            markMedicine(medicineElement);
+            markMedicineByExpirationDate(medicineElement);
             medicineElement.classList.add('visible');
         }, 150);
         saveMedicineToLocalStorage(medicine);
         newMedicineDiv.remove();
-        addModifyButton(medicineElement, nameTextArea.value);
-        addDeleteButton(medicineElement, nameTextArea.value);
+        createModifyButton(medicineElement);
+        createDeleteButton(medicineElement, nameTextArea.value);
+        saveLastUpdated();
     });
+
     var cancelImg = document.createElement('img');
     cancelImg.src = './assets/deny.svg';
     cancelImg.classList.add('create-medicine-btn');
     cancelImg.classList.add('clickable');
-    cancelImg.addEventListener('click', function () { newMedicineDiv.remove(); Quagga.stop(); });
+    cancelImg.addEventListener('click', function () {
+        Quagga.stop();
+        newMedicineDiv.remove();
+        if (nameTxt !== '') {
+            let medicine = new Medicine(nameTextArea.value, expirationDateInput.value, medicineStockCountInput.value, barcodeInput.value, remarksTextArea.value);
+            let medicineElement = createMedicineElement(medicine);
+            document.getElementById('add-medicine-img').parentNode.insertBefore(medicineElement, document.getElementById('add-medicine-img'));
+            setTimeout(function () {
+                markMedicineByExpirationDate(medicineElement);
+                medicineElement.classList.add('visible');
+            }, 150);
+            createModifyButton(medicineElement);
+            createDeleteButton(medicineElement, nameTextArea.value);
+        }
+    });
     buttonDiv.appendChild(okImg);
     buttonDiv.appendChild(cancelImg);
+
     newMedicineDiv.appendChild(nameLabel);
     newMedicineDiv.appendChild(expirationDateLabel);
     newMedicineDiv.appendChild(medicineStockCountLabel);
     newMedicineDiv.appendChild(barcodeLabel);
-    // newMedicineDiv.appendChild(barcodeScanButton);
+    newMedicineDiv.appendChild(cameraDiv);
     newMedicineDiv.appendChild(remarksLabel);
     newMedicineDiv.appendChild(buttonDiv);
+
     if (editableMedicineDiv === null)
         document.getElementById('add-medicine-img').parentNode.insertBefore(newMedicineDiv, document.getElementById('add-medicine-img'));
     else
@@ -447,6 +558,20 @@ function showCreateMedicineSection(nameTxt = '', expirationDateTxt = '', stockCo
     }, 50);
 }
 
+function saveLastUpdated() {
+    var profileLst = JSON.parse(localStorage.getItem('profiles'));
+    var curProfile = getProfileInstance();
+    for (var profile of profileLst) {
+        if (profile.name === getProfileName()) {
+            profile.lastUpdated = new Date(Date.now()).toLocaleString();
+        }
+    }
+    localStorage.setItem('profiles', JSON.stringify(profileLst));
+}
+
+/**
+ * Starts barcode scanner.
+ */
 function startScanner() {
     Quagga.init({
         inputStream: {
@@ -489,11 +614,12 @@ function startScanner() {
 
     }, function (err) {
         if (err) {
+            Quagga.stop();
+            document.getElementById('scanner-container').style.display = 'none';
             console.log(err);
             return
         }
 
-        console.log('Initialization finished. Ready to start');
         Quagga.start();
 
         // Set flag to is running
@@ -505,10 +631,17 @@ function startScanner() {
 
 
     Quagga.onDetected(function (result) {
-        console.log('Barcode detected and processed : [' + result.codeResult.code + ']', result);
+        document.getElementById('medicine-barcode-txt').value = result.codeResult.code;
+        Quagga.stop();
+        document.getElementById('scanner-container').style.display = 'none';
+        _scannerIsRunning = false;
     });
 }
 
+/**
+ * Gets profile instance from localstorage.
+ * @returns {UserProfile} user profile instance
+ */
 function getProfileInstance() {
     if (getProfileName() === '')
         return;
@@ -518,14 +651,26 @@ function getProfileInstance() {
     return profileLst.find(findProfileByName);
 }
 
+/**
+ * Returns profile instance from localstorage.
+ * @returns {UserProfile} user profile instance
+ */
 function findProfileByName(profile) {
     return profile.name === getProfileName();
 }
 
+/**
+ * Returns profile name from localstorage.
+ * @returns {UserProfile} user profile instance
+ */
 function getProfileName() {
     return window.location.href.split('profile=')[1];
 }
 
+/**
+ * Sets theme according to user's preference.
+ * Dark theme is applied by default
+ */
 function setTheme() {
     if (localStorage.getItem('theme') === 'light-theme') {
         document.body.classList.remove('dark-theme');
@@ -567,7 +712,8 @@ function createSection(headerStr, id, categoryIconSrc, categoryIconAltTxt) {
 document.getElementById('back-btn').addEventListener('click', function () { window.location.href = 'index.html'; });
 window.addEventListener('load', setTheme);
 window.addEventListener('load', function () { document.getElementById('cover').parentNode.insertBefore(createSection('Medicine List', 'medicine', './assets/medicine.svg', 'profiles'), document.getElementById('cover').nextSibling); });
-window.addEventListener('load', function () { document.getElementById('medicine').appendChild(addSearchInput()); });
+window.addEventListener('load', function () { document.getElementById('medicine').appendChild(createSearchInput()); });
+window.addEventListener('load', function () { document.getElementById('medicine').appendChild(createImportExportDiv()); });
 window.addEventListener('load', function () { document.getElementById('medicine').appendChild(createSortByElements()); });
 window.addEventListener('load', displayMedicine);
 window.addEventListener('load', createAddMedicineButton);

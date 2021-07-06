@@ -65,6 +65,10 @@ h2 {
 }
 
 .element {
+	width: fit-content;
+	height: fit-content;
+	min-width: fit-content;
+	min-height: fit-content;
 	opacity: 0;
     transform: scale(0.6, 0.6) translate(50px, 0);
     transition: opacity .2s ease-out, transform .2s ease-out;
@@ -215,6 +219,23 @@ body.light-theme .search-input {
 	color: black;
 }
 
+.import-export-div {
+	margin: 0 auto;
+	display: table;
+	align-items: center;
+	padding-top: 2rem;
+}
+
+#import-img {
+	width: 2rem;
+	height: 2rem;
+}
+
+#export-img {
+	width: 2rem;
+	height: 2rem;
+}
+
 .sort-by-div {
 	font-weight: bold;
 	margin: 0 auto;
@@ -247,7 +268,7 @@ body.light-theme .sort-by-div {
 	color: white;
 	text-align: center;
 	font-weight: bold;
-	font-size: 1rem;
+	font-size: 2rem;
 	display: block;
 	padding: 1rem;
 }
@@ -277,14 +298,20 @@ body.light-theme .sort-by-div {
 }
 
 #scanner-container {
-	padding: 0 auto;
+	padding: 1rem;
+	margin: 0 auto;
 	display: block;
 	align-items: center;
     text-align: center;
 }
 
+#scanner-container canvas {
+	display: none;
+}
+
 #new-medicine-div {
 	display: table;
+	
 	align-items: center;
 }
 
