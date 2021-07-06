@@ -513,6 +513,8 @@ function getProfileInstance() {
     if (getProfileName() === '')
         return;
     let profileLst = JSON.parse(localStorage.getItem('profiles'));
+    if (profileLst.find(findProfileByName) === undefined)
+        window.location.href = '404.html';
     return profileLst.find(findProfileByName);
 }
 
