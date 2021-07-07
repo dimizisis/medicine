@@ -91,11 +91,11 @@ function createProfileElement(profile) {
     profileNameLabel.classList.add('create-profile-labels');
     profileNameLabel.classList.add('profile-name');
     profileNameLabel.innerHTML = profile.name;
-    profileNameLabel.href = 'medicine_list.html?profile=' + profile.name;
+    profileNameLabel.href = 'medicine_list.html';
     profileNameLabel.addEventListener('click', function (e) {
         e.preventDefault();
-        setTimeout(function(){document.location.href = 'medicine_list.html?profile=' + profile.name;},500);
-        // window.location.href = 'medicine_list.html?profile=' + profile.name;
+        localStorage.setItem('currProfile', profile.name);
+        window.location.href = 'medicine_list.html';
     });
 
     var totalMedicineLabel = document.createElement('label');

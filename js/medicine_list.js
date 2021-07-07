@@ -656,7 +656,7 @@ function findProfileByName(profile) {
  * @returns {UserProfile} user profile instance
  */
 function getProfileName() {
-    return window.location.href.split('profile=')[1];
+    return localStorage.getItem('currProfile');
 }
 
 /**
