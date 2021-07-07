@@ -91,7 +91,7 @@ function createProfileElement(profile) {
     profileNameLabel.classList.add('create-profile-labels');
     profileNameLabel.classList.add('profile-name');
     profileNameLabel.innerHTML = profile.name;
-    profileNameLabel.href = 'medicine_list.html?profile=' + profile.name;
+    profileNameLabel.href = 'medicine_list.html?profile=' + profile.name, true;
     profileNameLabel.addEventListener('click', function () {
         window.location.href = 'medicine_list.html?profile=' + profile.name;
     });
