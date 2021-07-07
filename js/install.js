@@ -20,7 +20,9 @@ window.addEventListener('beforeinstallprompt', (event) => {
     // Stash the event so it can be triggered later.
     installPromptEvent = event;
     // Show the modal add to home screen dialog
-    installPromptEvent.prompt();
+    try {
+        installPromptEvent.prompt();
+    } catch (e) { }
     // Wait for the user to respond to the prompt
     installPromptEvent.userChoice.then((choice) => {
         if (choice.outcome === 'accepted') {
