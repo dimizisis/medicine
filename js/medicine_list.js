@@ -42,6 +42,7 @@ function createImportExportDiv() {
     var hiddenInput = document.createElement('input');
     hiddenInput.id = 'file-input';
     hiddenInput.type = 'file';
+    hiddenInput.accept = '.csv';
     hiddenInput.style.display = 'none';
     hiddenInput.addEventListener('change', uploadCSV);
     var importImg = document.createElement('img');

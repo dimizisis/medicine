@@ -24,6 +24,7 @@ self.addEventListener('install', function(event) {
                 './favicon-16x16.png',
                 './favicon-32x32.png',
                 './manifest.json',
+                './assets/search.png',
                 './assets/csv.svg',
                 './assets/dark.svg',
                 './assets/deny.svg',
