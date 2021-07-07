@@ -93,9 +93,7 @@ function createProfileElement(profile) {
     profileNameLabel.innerHTML = profile.name;
     profileNameLabel.href = 'medicine_list.html?profile=' + profile.name;
     profileNameLabel.addEventListener('click', function () {
-        window.location = 'medicine_list.html?profile=' + profile.name;
-        // window.location.href = 'medicine_list.html?profile=' + profile.name;
-        // return false;
+        window.location.href = 'medicine_list.html?profile=' + profile.name;
     });
 
     var totalMedicineLabel = document.createElement('label');
