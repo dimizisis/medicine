@@ -32,19 +32,20 @@ html {
 	padding: 5px;
 }
 
+body {
+	position: relative;
+	min-height: 100%;
+	min-width: 350px;
+	font-family: "Source Sans Pro", sans-serif;
+	margin: 0px;
+}
+
 body.dark-theme #change-theme-img {
 	border: 2px solid white;
 }
 
 body.light-theme #change-theme-img {
 	border: 2px solid black;
-}
-
-body {
-	position: relative;
-	min-height: 100%;
-	font-family: "Source Sans Pro", sans-serif;
-	margin: 0px;
 }
 
 body.dark-theme {
@@ -66,6 +67,11 @@ body.light-theme {
 	padding: 20px;
     width: fit-content;
     height: fit-content;
+}
+
+.centerized-btn {
+	display: table;
+    margin: 0 auto;
 }
 
 body.dark-theme .rounded{
@@ -92,6 +98,7 @@ body.light-theme .info-textarea {
 h1 {
 	text-align: center;
 	font-size: 3rem;
+	margin: 2rem;
 }
 
 h2 {
@@ -212,7 +219,9 @@ h3 {
 }
 
 @media all and (max-width: 1030px) {
-	
+	#main-image {
+		max-width: 60%;
+	}
 }
 
 @media all and (max-width: 250px) {

@@ -43,6 +43,7 @@ function displayProfiles() {
     addProfileImg.src = './assets/plus.svg';
     addProfileImg.classList.add('button');
     addProfileImg.classList.add('clickable');
+    addProfileImg.classList.add('centerized-btn');
     addProfileImg.addEventListener('click', showCreateProfileSection);
 
     profilesSection.appendChild(addProfileImg);
@@ -207,48 +208,38 @@ function createSection(headerStr, id, categoryIconSrc, categoryIconAltTxt) {
     return section;
 }
 
+/**
+ * Sets the apropriate theme. Checks to see if a relative
+ * record exists in localstorage, else checks the user's
+ * operating system theme.
+ */
 function setTheme() {
-    if (localStorage.getItem('theme') === 'light-theme') {
+    const currentTheme = localStorage.getItem('theme');
+    if (currentTheme === 'light-theme') {
         document.getElementById('change-theme-img').src = './assets/dark.svg';
         document.body.classList.remove('dark-theme');
         document.body.classList.add('light-theme');
-    } else {
+    } else if (currentTheme === 'dark-theme') {
         document.getElementById('change-theme-img').src = './assets/light.svg';
         document.body.classList.remove('light-theme');
         document.body.classList.add('dark-theme');
+    } else {
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.body.classList.add('dark-theme');
+        } else {
+            document.body.classList.add('light-theme');
+        }
     }
 }
 
 const btn = document.getElementById('change-theme-img');
-
-// Check for dark mode preference at the OS level
-const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
-
-// Get the user's theme preference from local storage, if it's available
-const currentTheme = localStorage.getItem('theme');
-
-// If the user's preference in localStorage is dark...
-if (currentTheme == 'dark') {
-    // ...let's toggle the .dark-theme class on the body
-    document.body.classList.toggle('dark-theme');
-    // Otherwise, if the user's preference in localStorage is light...
-} else if (currentTheme == 'light') {
-    // ...let's toggle the .light-theme class on the body
-    document.body.classList.toggle('light-theme');
-}
-
-// Listen for a click on the button 
 btn.addEventListener('click', function () {
-    // If the OS is set to dark mode...
     if (document.body.classList.contains('dark-theme')) {
-        // ...then apply the .light-theme class to override those styles
         document.body.classList.remove('dark-theme');
         document.body.classList.add('light-theme');
         this.src = 'assets/dark.svg';
         localStorage.setItem('theme', 'light-theme');
-        // Otherwise...
     } else {
-        // ...apply the .dark-theme class to override the default light styles
         document.body.classList.remove('light-theme');
         document.body.classList.add('dark-theme');
         this.src = 'assets/light.svg';

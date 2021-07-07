@@ -17,14 +17,6 @@ class Medicine {
         this.barcode = barcode;
         this.remarks = remarks;
     }
-
-    /** 
-     * Returns the medicine info to string (comma separated values)
-     * @returns {string} the medicine info to string
-     */
-    toStr() {
-        return this.name + ',' + this.expirationDate + ',' + this.stockCount + ',' + this.barcode + ',' + this.remarks;
-    }
 }
 
 /** 
