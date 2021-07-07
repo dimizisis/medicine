@@ -26,8 +26,6 @@ function displayProfiles() {
     if (profileLst != null) {
         for (var profile of profileLst) {
             let profileSection = createProfileElement(profile);
-            addModifyButton(profileSection, profile.name);
-            addDeleteButton(profileSection, profile.name);
             profilesSection.appendChild(profileSection);
             setTimeout(function () {
                 profileSection.classList.add('visible');
@@ -87,38 +85,57 @@ function createProfileElement(profile) {
     profileDiv.classList.add('rounded');
     profileDiv.classList.add('element');
 
-    var profileNameLabel = document.createElement('a');
-    profileNameLabel.classList.add('create-profile-labels');
-    profileNameLabel.classList.add('profile-name');
-    profileNameLabel.innerHTML = profile.name;
-    profileNameLabel.href = 'medicine_list.html';
-    profileNameLabel.addEventListener('click', function (e) {
+    var infoDiv = document.createElement('div');
+    infoDiv.classList.add('info-div');
+
+    var profileNameValue = document.createElement('a');
+    profileNameValue.classList.add('create-profile-labels');
+    profileNameValue.classList.add('profile-name');
+    profileNameValue.innerHTML = profile.name;
+    profileNameValue.href = 'medicine_list.html';
+    profileNameValue.addEventListener('click', function (e) {
         e.preventDefault();
         localStorage.setItem('currProfile', profile.name);
         window.location.href = 'medicine_list.html';
     });
+    profileDiv.appendChild(profileNameValue);
 
     var totalMedicineLabel = document.createElement('label');
-    totalMedicineLabel.innerHTML = 'Total Medicine: '.bold() + profile.medicine.length;
-    totalMedicineLabel.classList.add('create-profile-labels');
+    totalMedicineLabel.innerHTML = 'Total Medicine: '.bold();
+    var totalMedicineValue = document.createElement('label');
+    totalMedicineValue.innerHTML = profile.medicine.length;
+    totalMedicineValue.classList.add('create-profile-labels');
 
     var createdLabel = document.createElement('label');
-    createdLabel.innerHTML = 'Created: '.bold() + profile.createDate;
-    createdLabel.classList.add('create-profile-labels');
+    createdLabel.innerHTML = 'Created: '.bold();
+    var createdValue = document.createElement('label');
+    createdValue.innerHTML = profile.createDate;
+    createdValue.classList.add('create-profile-labels');
 
     var lastUpdatedLabel = document.createElement('label');
-    lastUpdatedLabel.innerHTML = 'Last Updated: '.bold() + profile.lastUpdated;
-    lastUpdatedLabel.classList.add('create-profile-labels');
+    lastUpdatedLabel.innerHTML = 'Last Updated: '.bold();
+    var lastUpdatedValue = document.createElement('label');
+    lastUpdatedValue.innerHTML = profile.lastUpdated;
+    lastUpdatedValue.classList.add('create-profile-labels');
 
-    profileDiv.appendChild(profileNameLabel);
-    profileDiv.appendChild(totalMedicineLabel);
-    profileDiv.appendChild(createdLabel);
-    profileDiv.appendChild(lastUpdatedLabel);
+    infoDiv.appendChild(totalMedicineLabel);
+    infoDiv.appendChild(totalMedicineValue);
+    infoDiv.appendChild(createdLabel);
+    infoDiv.appendChild(createdValue);
+    infoDiv.appendChild(lastUpdatedLabel);
+    infoDiv.appendChild(lastUpdatedValue);
+    profileDiv.appendChild(infoDiv);
+
+    var buttonDiv = document.createElement('div');
+    buttonDiv.classList.add('button-div');
+    buttonDiv.appendChild(createModifyButton(profileDiv));
+    buttonDiv.appendChild(createDeleteButton(profileDiv, profile.name));
+    profileDiv.appendChild(buttonDiv);
 
     return profileDiv;
 }
 
-function addDeleteButton(profileSection, profileName) {
+function createDeleteButton(profileSection, profileName) {
     var deleteProfileButton = document.createElement('div');
     deleteProfileButton.style.display = 'inline-block;';
     var deleteImg = document.createElement('img');
@@ -127,10 +144,10 @@ function addDeleteButton(profileSection, profileName) {
     deleteImg.classList.add('clickable');
     deleteImg.addEventListener('click', function () { deleteProfileFromLocalStorage(profileName); profileSection.remove(); });
     deleteProfileButton.appendChild(deleteImg);
-    profileSection.appendChild(deleteProfileButton);
+    return deleteProfileButton;
 }
 
-function addModifyButton(profileSection, profileName) {
+function createModifyButton(profileSection, profileName) {
     var modifyProfileButton = document.createElement('div');
     modifyProfileButton.style.display = 'inline-block;';
     var modifyImg = document.createElement('img');
@@ -139,7 +156,7 @@ function addModifyButton(profileSection, profileName) {
     modifyImg.classList.add('clickable');
     modifyImg.addEventListener('click', function () { });
     modifyProfileButton.appendChild(modifyImg);
-    profileSection.appendChild(modifyProfileButton);
+    return modifyProfileButton;
 }
 
 /**
@@ -167,8 +184,6 @@ function showCreateProfileSection() {
         }, 150);
         saveProfileToLocalStorage();
         newProfileDiv.remove();
-        addModifyButton(newProfile, textArea.value);
-        addDeleteButton(newProfile, textArea.value);
     });
     var cancelImg = document.createElement('img');
     cancelImg.src = './assets/deny.svg';
@@ -221,10 +236,12 @@ function setTheme() {
         document.getElementById('change-theme-img').src = './assets/dark.svg';
         document.body.classList.remove('dark-theme');
         document.body.classList.add('light-theme');
+        document.getElementById('change-theme-img').src = 'assets/dark.svg';
     } else if (currentTheme === 'dark-theme') {
         document.getElementById('change-theme-img').src = './assets/light.svg';
         document.body.classList.remove('light-theme');
         document.body.classList.add('dark-theme');
+        document.getElementById('change-theme-img').src = 'assets/light.svg';
     } else {
         if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
             document.body.classList.add('dark-theme');

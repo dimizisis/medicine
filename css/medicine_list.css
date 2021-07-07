@@ -22,7 +22,6 @@ body {
 	position: relative;
 	min-height: 100%;
 	font-family: "Source Sans Pro", sans-serif;
-	margin: 0px;
 }
 
 body.dark-theme {
@@ -36,14 +35,14 @@ body.light-theme {
 }
 
 .rounded {
+	width: fit-content;
+    height: fit-content;
 	display: table;
     margin: 0 auto;
 	margin-bottom: 3rem;
     text-align: center;
     border-radius: 25px;
 	padding: 20px;
-    width: fit-content;
-    height: fit-content;
 }
 
 body.dark-theme .rounded{
@@ -54,21 +53,7 @@ body.light-theme .rounded{
     border: 2px solid black;
 }
 
-h1 {
-	text-align: center;
-	font-size: 3rem;
-}
-
-h2 {
-	font-size: 2rem;
-	text-align: center;
-}
-
 .element {
-	width: fit-content;
-	height: fit-content;
-	min-width: fit-content;
-	min-height: fit-content;
 	opacity: 0;
     transform: scale(0.6, 0.6) translate(50px, 0);
     transition: opacity .2s ease-out, transform .2s ease-out;
@@ -77,6 +62,32 @@ h2 {
 .element.visible {
     opacity: 1;
     transform: scale(1, 1) translate(0, 0);
+}
+
+.info-div {
+	display: grid;
+	grid-auto-rows: 1fr;
+	grid-template-columns: 1fr 1fr;
+	align-items: center;
+	margin-bottom: 2rem;
+}
+
+.button-div {
+	display: grid;
+	grid-auto-rows: 1fr;
+	grid-template-columns: 1fr 1fr;
+	align-items: center;
+	margin-bottom: 2rem;
+}
+
+h1 {
+	text-align: center;
+	font-size: 3rem;
+}
+
+h2 {
+	font-size: 2rem;
+	text-align: center;
 }
 
 body.dark-theme h1 {
@@ -108,6 +119,12 @@ body.light-theme h2 {
 	margin-bottom: 3rem;
 }
 
+.button-div {
+	padding: 0 auto;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+}
+
 .create-medicine-btn {
 	padding-top: 1rem;
 	width: 2rem;
@@ -118,16 +135,18 @@ body.light-theme h2 {
 	padding-top: 1rem;
 	width: 2rem;
 	height: 2rem;
+}
+
+.barcode-input-button {
+	display: grid;
+	grid-template-columns: 1fr 0.2fr;
 }
 
 select {
-    margin: 0 auto;
-    text-align: center;
 	margin-left: 1rem;
     border-radius: 25px;
     width: fit-content;
     height: fit-content;
-	display: inline-flex;
 }
 
 body.light-theme select {
@@ -178,10 +197,6 @@ h3 {
 	resize: both;
 }
 
-label {
-	padding-top: 1rem;
-}
-
 #medicine-barcode-txt {
 	margin-right: 1rem;
 }
@@ -221,26 +236,30 @@ body.light-theme .search-input {
 
 .import-export-div {
 	margin: 0 auto;
-	display: table;
-	align-items: center;
+	width: fit-content;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
 	padding-top: 2rem;
 }
 
 #import-img {
 	width: 2rem;
 	height: 2rem;
+	padding-right: 1rem;
 }
 
 #export-img {
 	width: 2rem;
 	height: 2rem;
+	padding-left: 1rem;
 }
 
 .sort-by-div {
+	width: fit-content;
 	font-weight: bold;
 	margin: 0 auto;
-	display: table;
-	align-items: center;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
 	padding: 2rem;
 }
 
@@ -262,6 +281,12 @@ body.light-theme .sort-by-div {
 
 .ahead-of-expiration {
 	background: linear-gradient(to bottom, #11998e, #38ef7d);
+}
+
+.medicine-info-label {
+	font-weight: bold;
+	color: white;
+	display: block;
 }
 
 .medicine-name {
@@ -310,9 +335,15 @@ body.light-theme .sort-by-div {
 }
 
 #new-medicine-div {
-	display: table;
-	
+	display: grid;
+	grid-auto-rows: 1fr;
+	grid-template-columns: 1fr 1fr;
 	align-items: center;
+	margin-bottom: 2rem;
+}
+
+.label-input-div {
+	display: flex;
 }
 
 .create-med-lbl {
@@ -356,7 +387,7 @@ body.light-theme .sort-by-div {
 		width: 90%;
 	}
 	table th, table td {
-	  font-size: smaller;
+	  	font-size: smaller;
 	}
 	#chartdiv {
 		width: 90%;
