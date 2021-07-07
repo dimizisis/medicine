@@ -129,7 +129,7 @@ function parse(data) {
  * Creates table with user's medicine.
  * @param sortBy string that represents the sort criteria
  */
-function displayMedicine(sortBy = 'default') {
+function displayMedicine(sortBy = 'name-asc') {
 
     var allMedicineSection = document.getElementById('medicine');
     var profile = getProfileInstance();
@@ -804,5 +804,5 @@ window.addEventListener('load', function () { document.getElementById('cover').p
 window.addEventListener('load', function () { document.getElementById('medicine').appendChild(createSearchInput()); });
 window.addEventListener('load', function () { document.getElementById('medicine').appendChild(createImportExportDiv()); });
 window.addEventListener('load', function () { document.getElementById('medicine').appendChild(createSortByElements()); });
-window.addEventListener('load', displayMedicine);
+window.addEventListener('load',  function () { displayMedicine('name-asc'); });
 window.addEventListener('load', createAddMedicineButton);

@@ -258,7 +258,6 @@ body.light-theme .search-input {
 	width: fit-content;
 	font-weight: bold;
 	margin: 0 auto;
-	display: grid;
 	grid-template-columns: 1fr 1fr;
 	padding: 2rem;
 }
