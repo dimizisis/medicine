@@ -30,15 +30,25 @@ function arrayToCsv() {
     return csvStr;
 }
 
+/** 
+ * Creates a div element for the import/export buttons.
+ * @returns the division element
+ */
 function createImportExportDiv() {
     var importExportDiv = document.createElement('div');
     importExportDiv.classList.add('import-export-div');
     var importA = document.createElement('a');
     importA.id = 'import-a';
+    var hiddenInput = document.createElement('input');
+    hiddenInput.id = 'file-input';
+    hiddenInput.type = 'file';
+    hiddenInput.style.display = 'none';
+    hiddenInput.addEventListener('change', uploadCSV);
     var importImg = document.createElement('img');
     importImg.src = './assets/import.svg';
     importImg.id = 'import-img';
     importImg.classList.add('clickable');
+    importImg.addEventListener('click', function () { document.getElementById('file-input').click(); });
     importA.appendChild(importImg);
     importA.title = 'Import Medicine from CSV';
 
@@ -52,12 +62,34 @@ function createImportExportDiv() {
     exportA.appendChild(exportImg);
     exportA.title = 'Export Medicine to CSV';
 
+    importExportDiv.appendChild(hiddenInput);
     importExportDiv.appendChild(importA);
     importExportDiv.appendChild(exportA);
 
     return importExportDiv;
 }
 
+/** 
+ * Triggers the hidden input element.
+ * Triggered each time user presses the 'upload' button.
+ */
+function uploadCSV() {
+    if (this.files && this.files[0]) {
+        var myFile = this.files[0];
+        var reader = new FileReader();
+        console.log(myFile);
+        reader.addEventListener('load', function (e) {
+            let csvdata = e.target.result;
+            parse(csvdata); // calling function for parse csv data 
+        });
+        reader.readAsBinaryString(myFile);
+    }
+}
+
+/** 
+ * Prepares a CSV file and starts the download.
+ * Triggered each time user presses the 'download' button.
+ */
 function downloadCSV() {
     var exportImg = document.getElementById('export-a');
     exportImg.download = 'data.csv';
@@ -66,7 +98,36 @@ function downloadCSV() {
 }
 
 /** 
+ * Parses CSV and sets the new data (medicine list).
+ * @param data csv data uploaded
+ */
+function parse(data) {
+    let newLinebrk = data.split('\n');
+    const currProfile = getProfileInstance();
+    for (let i = 1; i < newLinebrk.length - 1; ++i) {
+        var line = newLinebrk[i].split(',');
+        var index = currProfile.medicine.findIndex(m => m.barcode === line[3]);
+        if (index === -1) {
+            currProfile.medicine.push(new Medicine(line[0], line[1], line[2], line[3], line[4]));
+        } else {
+            currProfile.medicine[index] = new Medicine(line[0], line[1], line[2], line[3], line[4]);
+        }
+        console.log(line);
+    }
+    var profileLst = JSON.parse(localStorage.getItem('profiles'));
+    var newProfileLst = [...profileLst];
+    for (var profile of newProfileLst) {
+        if (profile.name === getProfileName()) {
+            profile.medicine = currProfile.medicine;
+        }
+    }
+    localStorage.setItem('profiles', JSON.stringify(newProfileLst));
+    window.location.reload();
+}
+
+/** 
  * Creates table with user's medicine.
+ * @param sortBy string that represents the sort criteria
  */
 function displayMedicine(sortBy = 'default') {
 
@@ -74,12 +135,21 @@ function displayMedicine(sortBy = 'default') {
     var profile = getProfileInstance();
     var sorted_medicine = profile.medicine;
 
-    if (sortBy === 'name') {
-        sorted_medicine.sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0));
-    } else if (sortBy === 'stockCount') {
-        sorted_medicine.sort((a, b) => (a.stockCount > b.stockCount) ? 1 : ((b.stockCount > a.stockCount) ? -1 : 0));
-    } else if (sortBy === 'date') {
-        sorted_medicine.sort((a, b) => (a.date > b.date) ? 1 : ((b.date > a.date) ? -1 : 0));
+    if (sortBy.toString().startsWith('name')) {
+        if (sortBy.toString().endsWith('asc'))
+            sorted_medicine.sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0));
+        else
+            sorted_medicine.sort((a, b) => (a.name < b.name) ? 1 : ((b.name < a.name) ? -1 : 0));
+    } else if (sortBy.toString().startsWith('stockCount')) {
+        if (sortBy.toString().endsWith('asc'))
+            sorted_medicine.sort((a, b) => (a.stockCount > b.stockCount) ? 1 : ((b.stockCount > a.stockCount) ? -1 : 0));
+        else
+            sorted_medicine.sort((a, b) => (a.stockCount < b.stockCount) ? 1 : ((b.stockCount < a.stockCount) ? -1 : 0));
+    } else if (sortBy.toString().startsWith('date')) {
+        if (sortBy.toString().endsWith('asc'))
+            sorted_medicine.sort((a, b) => (new Date(a.expirationDate).getTime() > new Date(b.expirationDate).getTime()) ? 1 : ((new Date(b.expirationDate).getTime() > new Date(a.expirationDate).getTime()) ? -1 : 0));
+        else
+            sorted_medicine.sort((a, b) => (new Date(a.expirationDate).getTime() < new Date(b.expirationDate).getTime()) ? 1 : ((new Date(b.expirationDate).getTime() < new Date(a.expirationDate).getTime()) ? -1 : 0));
     }
 
     if (profile != null) {
@@ -356,7 +426,7 @@ function search() {
  * @param {Array} labels the labels within the medicine element
  * @returns {boolean} true if the medicine must be returned as a search result, false otherwise.
  */
-function isSearchResult(labels, filter) {
+function isSearchResult(labels) {
     var textValue, filter, input;
     input = document.getElementById('search-input');
     filter = input.value.toUpperCase();
@@ -377,21 +447,33 @@ function createSortByElements(index = 0) {
     var sortByDiv = document.createElement('div');
     sortByDiv.classList.add('sort-by-div');
     var sortByLabel = document.createElement('label');
-    sortByLabel.innerHTML = 'Sort By: ';
+    sortByLabel.innerHTML = 'Sort By:';
 
     var dropDownSortBy = document.createElement('select');
-    var name = document.createElement('option');
-    name.value = 'name';
-    name.innerHTML = 'Name';
-    var date = document.createElement('option');;
-    date.value = 'date';
-    date.innerHTML = 'Date';
-    var stockCount = document.createElement('option');
-    stockCount.value = 'stockCount';
-    stockCount.innerHTML = 'Stock Count';
-    dropDownSortBy.options.add(name);
-    dropDownSortBy.options.add(date);
-    dropDownSortBy.options.add(stockCount);
+    var nameAsc = document.createElement('option');
+    nameAsc.value = 'name-asc';
+    nameAsc.innerHTML = 'Name (Ascending)';
+    var nameDesc = document.createElement('option');
+    nameDesc.value = 'name-desc';
+    nameDesc.innerHTML = 'Name (Descending)';
+    var dateAsc = document.createElement('option');
+    dateAsc.value = 'date-asc';
+    dateAsc.innerHTML = 'Expiration Date (Ascending)';
+    var dateDesc = document.createElement('option');
+    dateDesc.value = 'date-desc';
+    dateDesc.innerHTML = 'Expiration Date (Descending)';
+    var stockCountAsc = document.createElement('option');
+    stockCountAsc.value = 'stockCount-asc';
+    stockCountAsc.innerHTML = 'Stock Count (Ascending)';
+    var stockCountDesc = document.createElement('option');
+    stockCountDesc.value = 'stockCount-desc';
+    stockCountDesc.innerHTML = 'Stock Count (Descending)';
+    dropDownSortBy.options.add(nameAsc);
+    dropDownSortBy.options.add(nameDesc);
+    dropDownSortBy.options.add(dateAsc);
+    dropDownSortBy.options.add(dateDesc);
+    dropDownSortBy.options.add(stockCountAsc);
+    dropDownSortBy.options.add(stockCountDesc);
 
     dropDownSortBy.selectedIndex = index;
 
@@ -400,6 +482,7 @@ function createSortByElements(index = 0) {
         deleteAllMedicineSection();
         document.getElementById('cover').parentNode.insertBefore(createSection('Medicine List', 'medicine', './assets/medicine.svg', 'medicine'), document.getElementById('cover').nextSibling);
         document.getElementById('medicine').appendChild(createSearchInput());
+        document.getElementById('medicine').appendChild(createImportExportDiv());
         document.getElementById('medicine').appendChild(createSortByElements(this.selectedIndex));
         displayMedicine(this.value);
         createAddMedicineButton();
@@ -440,7 +523,6 @@ function showCreateMedicineSection(nameTxt = '', expirationDateTxt = '', stockCo
         nameTextArea.innerText = nameTxt;
         nameTextArea.value = nameTxt;
     }
-    // nameLabel.appendChild(nameTextArea);
     newMedicineDiv.appendChild(nameLabel);
     newMedicineDiv.appendChild(nameTextArea);
 
@@ -636,10 +718,6 @@ function startScanner() {
         // Set flag to is running
         _scannerIsRunning = true;
     });
-
-    Quagga.onProcessed(function (result) {
-    });
-
 
     Quagga.onDetected(function (result) {
         document.getElementById('medicine-barcode-txt').value = result.codeResult.code;
