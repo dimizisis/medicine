@@ -497,10 +497,6 @@ input::-webkit-input-placeholder {
 		margin-right: 2rem;
 	}
 
-	.element.visible {
-		margin: 2rem;
-	}
-
 	#sortby-select {
 		width: fit-content;
 		font-weight: bold;
@@ -517,6 +513,7 @@ input::-webkit-input-placeholder {
 	#back-btn-div {
 		display: flex;
 		justify-content: center;
+		margin-top: 1rem;
 	}
 
 	#back-btn {
@@ -527,7 +524,7 @@ input::-webkit-input-placeholder {
 	}
 
 	#add-medicine-img {
-		margin: 0 auto;
+		margin: 0 auto 2rem;
 	}
 
 	#cover {
