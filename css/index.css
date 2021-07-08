@@ -138,6 +138,16 @@ body.light-theme h2 {
 	padding: 1rem;
 }
 
+.created-label {
+	display: block;
+	padding: 1rem;
+}
+
+.last-updated-label {
+	display: block;
+	padding: 1rem;
+}
+
 .profile-name {
 	font-size: 2rem;
 	font-weight: bold;

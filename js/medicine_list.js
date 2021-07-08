@@ -617,7 +617,7 @@ function showCreateMedicineSection(nameTxt = '', expirationDateTxt = '', stockCo
         Quagga.stop();
         newMedicineDiv.remove();
         if (nameTxt !== '') {
-            let medicine = new Medicine(nameTextArea.value, expirationDateInput.value, medicineStockCountInput.value, barcodeInput.value, remarksTextArea.value);
+            let medicine = new Medicine(nameTxt, expirationDateTxt, stockCount, barcodeTxt, remarksTxt);
             let medicineElement = createMedicineElement(medicine);
             document.getElementById('add-medicine-img').parentNode.insertBefore(medicineElement, document.getElementById('add-medicine-img'));
             setTimeout(function () {
@@ -651,6 +651,9 @@ function showCreateMedicineSection(nameTxt = '', expirationDateTxt = '', stockCo
     }, 50);
 }
 
+/**
+ * Saves the last updated timestamp.
+ */
 function saveLastUpdated() {
     var profileLst = JSON.parse(localStorage.getItem('profiles'));
     var curProfile = getProfileInstance();
