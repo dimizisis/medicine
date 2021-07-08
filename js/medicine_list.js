@@ -260,9 +260,8 @@ function prepareNewProfileList(newMedicineInstance) {
     var newProfileLst = [...profileLst];
     for (var profile of newProfileLst) {
         if (profile.name === profileName) {
-            profile.medicine = profile.medicine.map(m => m.barcode !== newMedicineInstance.barcode ? m : newMedicineInstance);
             for (var med of profile.medicine) {
-                if (med.barcode === newMedicineInstance.barcode) {
+                if (med.name === newMedicineInstance.name && new Date(med.expirationDate).getTime() === new Date(newMedicineInstance.expirationDate).getTime() && med.barcode === newMedicineInstance.barcode) {
                     med.name = newMedicineInstance.name;
                     med.expirationDate = newMedicineInstance.expirationDate;
                     med.stockCount = newMedicineInstance.stockCount;
@@ -432,7 +431,7 @@ function isSearchResult(labels) {
     input = document.getElementById('search-input');
     filter = input.value.toUpperCase();
     for (var j = 0; j < labels.length; ++j) {
-        textValue = labels[j].textContent.toUpperCase() || labels[i].innerText.toUpperCase();
+        textValue = labels[j].textContent.toUpperCase() || labels[j].innerText.toUpperCase();
         if (textValue.indexOf(filter) > -1) {
             return true;
         }
@@ -571,10 +570,14 @@ function showCreateMedicineSection(nameTxt = '', expirationDateTxt = '', stockCo
     barcodeScanButton.addEventListener('click', function () {
         if (!_scannerIsRunning) {
             cameraDiv.style.display = '';
+            newMedicineDiv.style.gridAutoRows = '0.2fr';
+            newMedicineDiv.style.alignItems = 'normal';
             startScanner();
         } else {
             Quagga.stop();
             document.getElementById('scanner-container').style.display = 'none';
+            newMedicineDiv.style.gridAutoRows = '1fr';
+            newMedicineDiv.style.alignItems = 'center';
             _scannerIsRunning = false;
         }
     });
@@ -597,16 +600,36 @@ function showCreateMedicineSection(nameTxt = '', expirationDateTxt = '', stockCo
     okImg.classList.add('create-medicine-btn');
     okImg.classList.add('clickable');
     okImg.addEventListener('click', function () {
-        let medicine = new Medicine(nameTextArea.value, expirationDateInput.value, medicineStockCountInput.value, barcodeInput.value, remarksTextArea.value);
-        let medicineElement = createMedicineElement(medicine);
-        document.getElementById('add-medicine-img').parentNode.insertBefore(medicineElement, document.getElementById('add-medicine-img'));
-        setTimeout(function () {
-            markMedicineByExpirationDate(medicineElement);
-            medicineElement.classList.add('visible');
-        }, 150);
-        saveMedicineToLocalStorage(medicine);
-        newMedicineDiv.remove();
-        saveLastUpdated();
+        if (nameTextArea.value !== '' && expirationDateInput.value !== '' && barcodeInput.value !== '' && !medicineExists(nameTextArea.value, expirationDateInput.value, barcodeInput.value)) {
+            let medicine = new Medicine(nameTextArea.value, expirationDateInput.value, medicineStockCountInput.value, barcodeInput.value, remarksTextArea.value);
+            let medicineElement = createMedicineElement(medicine);
+            document.getElementById('add-medicine-img').parentNode.insertBefore(medicineElement, document.getElementById('add-medicine-img'));
+            setTimeout(function () {
+                markMedicineByExpirationDate(medicineElement);
+                medicineElement.classList.add('visible');
+            }, 150);
+            saveMedicineToLocalStorage(medicine);
+            newMedicineDiv.remove();
+            saveLastUpdated();
+        } else {
+            if (nameTextArea.value === '') {
+                nameTextArea.classList.add('warning');
+                nameTextArea.placeholder = 'Please enter a valid medicine name';
+            } else if (medicineExists(nameTextArea.value, expirationDateInput.value, barcodeInput.value)) {
+                nameTextArea.value = '';
+                nameTextArea.innerText = '';
+                nameTextArea.classList.add('warning');
+                nameTextArea.placeholder = 'Medicine already exists';
+            }
+            if (barcodeInput.value === '') {
+                barcodeInput.classList.add('warning');
+                barcodeInput.placeholder = 'Please enter or scan a valid barcode';
+            }
+            if (expirationDateInput.value === '') {
+                expirationDateInput.classList.add('warning');
+                expirationDateInput.placeholder = 'Please enter a valid date';
+            }
+        }
     });
 
     var cancelImg = document.createElement('img');
@@ -649,6 +672,26 @@ function showCreateMedicineSection(nameTxt = '', expirationDateTxt = '', stockCo
     setTimeout(function () {
         newMedicineDiv.classList.add('visible');
     }, 50);
+}
+
+/**
+ * Checks if a medicine already exists in the profile. Distinct key: (name, expiration date, barcode)
+ * @param name the name of the medicine
+ * @param expirationDate the expiration date of the medicine
+ * @param barcode the medicine's barcode
+ * @returns true if already exists in the profile, false otherwise.
+ */
+function medicineExists(name, expirationDate, barcode) {
+    var profileLst = JSON.parse(localStorage.getItem('profiles'));
+    for (var profile of profileLst) {
+        if (profile.name === getProfileName()) {
+            for (var m of profile.medicine) {
+                if (m.name === name && new Date(m.expirationDate).getTime() === new Date(expirationDate).getTime() && m.barcode === barcode)
+                    return true;
+            }
+        }
+    }
+    return false;
 }
 
 /**
@@ -724,6 +767,8 @@ function startScanner() {
 
     Quagga.onDetected(function (result) {
         document.getElementById('medicine-barcode-txt').value = result.codeResult.code;
+        document.getElementById('new-medicine-div').style.gridAutoRows = '1fr';
+        document.getElementById('new-medicine-div').style.alignItems = 'center';
         Quagga.stop();
         document.getElementById('scanner-container').style.display = 'none';
         _scannerIsRunning = false;
@@ -798,5 +843,5 @@ window.addEventListener('load', function () { document.body.appendChild(createSe
 window.addEventListener('load', function () { document.body.appendChild(createImportExportDiv()); });
 window.addEventListener('load', function () { document.body.appendChild(createSortByElements()); });
 window.addEventListener('load', function () { document.body.appendChild(createSection('Medicine List', 'medicine', './assets/medicine.svg', 'profiles')); });
-window.addEventListener('load',  function () { displayMedicine('name-asc'); });
+window.addEventListener('load', function () { displayMedicine('name-asc'); });
 window.addEventListener('load', createAddMedicineButton);

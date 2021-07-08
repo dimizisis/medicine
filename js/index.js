@@ -64,7 +64,7 @@ function saveProfileToLocalStorage() {
 /**
  * Saves profile data to local storage properly.
  */
- function replaceProfileToLocalStorage(oldName, newName, created = '') {
+function replaceProfileToLocalStorage(oldName, newName, created = '') {
     if (oldName.value === '')
         return;
     var profileLst = JSON.parse(localStorage.getItem('profiles'));
@@ -200,42 +200,54 @@ function showCreateProfileSection(profileName = '', created = '') {
         textArea.value = profileName.toString();
     }
     var buttonDiv = document.createElement('div');
+    buttonDiv.classList.add('button-div');
     var okImg = document.createElement('img');
     okImg.src = './assets/ok.svg';
     okImg.classList.add('create-profile-btn');
     okImg.classList.add('clickable');
     okImg.addEventListener('click', function () {
-        let profile = new UserProfile(textArea.value);
-        if (created !== '')
-            profile.createDate = created;
-        let newProfile = createProfileElement(profile);
-        document.getElementById('add-profile-img').parentNode.insertBefore(newProfile, document.getElementById('add-profile-img'));
-        setTimeout(function () {
-            newProfile.classList.add('visible');
-        }, 150);
-        if (profileName !== '') {
-            if (created !== '') {
-                replaceProfileToLocalStorage(profileName, textArea.value, created);
+        if (textArea.value !== '' && !profileExists(textArea.value)) {
+            let profile = new UserProfile(textArea.value);
+            if (created !== '')
+                profile.createDate = created;
+            let newProfile = createProfileElement(profile);
+            document.getElementById('add-profile-img').parentNode.insertBefore(newProfile, document.getElementById('add-profile-img'));
+            setTimeout(function () {
+                newProfile.classList.add('visible');
+            }, 150);
+            if (profileName !== '') {
+                if (created !== '') {
+                    replaceProfileToLocalStorage(profileName, textArea.value, created);
+                }
+            }
+            else
+                saveProfileToLocalStorage();
+            newProfileDiv.remove();
+        } else {
+            textArea.classList.add('warning');
+            if (textArea.value === '')
+                textArea.placeholder = 'Not a valid name';
+            else {
+                textArea.value = '';
+                textArea.innerText = '';
+                textArea.placeholder = 'Profile already exists';
             }
         }
-        else
-            saveProfileToLocalStorage();
-        newProfileDiv.remove();
     });
     var cancelImg = document.createElement('img');
     cancelImg.src = './assets/deny.svg';
     cancelImg.classList.add('create-profile-btn');
     cancelImg.classList.add('clickable');
-    cancelImg.addEventListener('click', function () { 
-        if (nameTxt !== '') {
+    cancelImg.addEventListener('click', function () {
+        if (profileName !== '') {
             let profile = new UserProfile(profileName);
             let profileElement = createProfileElement(profile);
             document.getElementById('add-profile-img').parentNode.insertBefore(profileElement, document.getElementById('add-profile-img'));
             setTimeout(function () {
                 profileElement.classList.add('visible');
             }, 150);
-            newProfileDiv.remove(); 
         }
+        newProfileDiv.remove();
     });
     buttonDiv.appendChild(okImg);
     buttonDiv.appendChild(cancelImg);
@@ -245,7 +257,23 @@ function showCreateProfileSection(profileName = '', created = '') {
 }
 
 /**
+ * Checks if profile already exists in localstorage.
+ * @param profileName the name of the profile we are checking
+ * @returns true if already exists, false otherwise.
+ */
+function profileExists(profileName) {
+    var profileLst = JSON.parse(localStorage.getItem('profiles'));
+    for (var profile of profileLst) {
+        if (profile.name === profileName) {
+            return true;
+        }
+    }
+    return false;
+}
+
+/**
  * Saves the last updated timestamp.
+ * @param profileName the name of the profile updated.
  */
 function saveLastUpdated(profileName) {
     var profileLst = JSON.parse(localStorage.getItem('profiles'));
@@ -263,7 +291,7 @@ function saveLastUpdated(profileName) {
  * 
  * @param {Element} profileSection medicine to be marked
  */
- function showModificationWindow(profileSection) {
+function showModificationWindow(profileSection) {
     profileSection.style.display = 'none';
     var profileName = profileSection.getElementsByClassName('profile-name')[0].innerText;
     showCreateProfileSection(profileName, profileSection.getElementsByClassName('created-label')[0].innerText);

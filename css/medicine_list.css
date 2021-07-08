@@ -223,6 +223,10 @@ body.light-theme .info-textarea {
 	color: black;
 }
 
+.warning::placeholder {
+	color: red;
+}
+
 .search-input {
 	margin: 0 auto;
 	display: table;

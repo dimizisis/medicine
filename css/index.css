@@ -220,18 +220,19 @@ h3 {
     text-align: center;
 }
 
-/* Tooltip container */
 .tooltip {
 	position: relative;
 	display: inline-block;
 }
 
-/* Cover */
 #cover {
 	text-align: center;
     padding-top: 5rem;
 }
-/* End Cover */
+
+.warning::placeholder {
+	color: red;
+}
 
 @keyframes text_reveal_box {
 	50% {
