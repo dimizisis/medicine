@@ -257,6 +257,12 @@ h3 {
 	}
 }
 
+@media all and (max-width: 460px) {
+	.element.visible {
+		margin: 2rem;
+	}
+}
+
 @media all and (max-width: 370px) {
 	h2 {
 		font-size: 2rem;
