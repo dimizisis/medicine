@@ -61,6 +61,8 @@ body.light-theme .rounded{
 }
 
 .element.visible {
+	width: fit-content;
+	height: fit-content;
     opacity: 1;
     transform: scale(1, 1) translate(0, 0);
 }
@@ -445,7 +447,13 @@ input::-webkit-input-placeholder {
 }
 
 #appicon {
-	padding-top: 2rem;
+	display: flex;
+	justify-content: center;
+}
+
+#cover-icon {
+	width: 5rem;
+	height: 5rem;
 }
 
 #back-btn-div {
@@ -492,8 +500,8 @@ input::-webkit-input-placeholder {
 	}
 
 	#back-btn {
-		width: 5rem;
-		height: 5rem;
+		width: 4rem;
+		height: 4rem;
 	}
 
 	#add-medicine-img {
@@ -502,5 +510,10 @@ input::-webkit-input-placeholder {
 
 	#cover {
 		padding-top: 3rem;
+	}
+
+	#cover-icon {
+		width: 3rem;
+		height: 3rem;
 	}
 }
