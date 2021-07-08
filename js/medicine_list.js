@@ -451,6 +451,7 @@ function createSortByElements(index = 0) {
     sortByLabel.innerHTML = 'Sort By:';
 
     var dropDownSortBy = document.createElement('select');
+    dropDownSortBy.id = 'sortby-select';
     var nameAsc = document.createElement('option');
     nameAsc.value = 'name-asc';
     nameAsc.innerHTML = 'Name (Ascending)';
@@ -481,10 +482,8 @@ function createSortByElements(index = 0) {
     dropDownSortBy.addEventListener('change', function (e) {
         deleteAddMedicineButton();
         deleteAllMedicineSection();
-        document.getElementById('cover').parentNode.insertBefore(createSection('Medicine List', 'medicine', './assets/medicine.svg', 'medicine'), document.getElementById('cover').nextSibling);
-        document.getElementById('medicine').appendChild(createSearchInput());
-        document.getElementById('medicine').appendChild(createImportExportDiv());
-        document.getElementById('medicine').appendChild(createSortByElements(this.selectedIndex));
+        document.body.appendChild(createSection('Medicine List', 'medicine', './assets/medicine.svg', 'medicine'));
+        document.getElementById('sortby-select').selectedIndex = this.selectedIndex;
         displayMedicine(this.value);
         createAddMedicineButton();
     });
@@ -783,27 +782,18 @@ function setTheme() {
 function createSection(headerStr, id, categoryIconSrc, categoryIconAltTxt) {
     var section = document.createElement('section');
     section.id = id;
-    var imgDiv = document.createElement('div');
-    var categoryIcon = document.createElement('img');
-    categoryIcon.src = categoryIconSrc;
-    categoryIcon.classList.add('category-icon');
-    categoryIcon.alt = categoryIconAltTxt;
-    imgDiv.appendChild(categoryIcon);
 
     var header = document.createElement('h2');
     header.textContent = headerStr;
-    imgDiv.appendChild(header);
-
-    section.appendChild(imgDiv);
 
     return section;
 }
 
-document.getElementById('back-btn').addEventListener('click', function () { window.location.href = 'index.html'; });
 window.addEventListener('load', setTheme);
-window.addEventListener('load', function () { document.getElementById('cover').parentNode.insertBefore(createSection('Medicine List', 'medicine', './assets/medicine.svg', 'profiles'), document.getElementById('cover').nextSibling); });
-window.addEventListener('load', function () { document.getElementById('medicine').appendChild(createSearchInput()); });
-window.addEventListener('load', function () { document.getElementById('medicine').appendChild(createImportExportDiv()); });
-window.addEventListener('load', function () { document.getElementById('medicine').appendChild(createSortByElements()); });
+document.getElementById('back-btn').addEventListener('click', function () { window.location.href = 'index.html'; });
+window.addEventListener('load', function () { document.body.appendChild(createSearchInput()); });
+window.addEventListener('load', function () { document.body.appendChild(createImportExportDiv()); });
+window.addEventListener('load', function () { document.body.appendChild(createSortByElements()); });
+window.addEventListener('load', function () { document.body.appendChild(createSection('Medicine List', 'medicine', './assets/medicine.svg', 'profiles')); });
 window.addEventListener('load',  function () { displayMedicine('name-asc'); });
 window.addEventListener('load', createAddMedicineButton);

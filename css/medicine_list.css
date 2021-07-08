@@ -38,6 +38,7 @@ body.light-theme {
 	width: fit-content;
     height: fit-content;
 	display: table;
+	justify-content: center;
     margin: 0 auto;
 	margin-bottom: 3rem;
     text-align: center;
@@ -230,14 +231,17 @@ body.light-theme .info-textarea {
 }
 
 .import-export-div {
-	margin: 0 auto;
+	text-align: center;
+	justify-content: center;
 	width: fit-content;
-	display: grid;
-	grid-template-columns: 1fr 1fr;
+	margin: 0 auto;
+	display: flex;
+	flex-direction: row;
 	padding-top: 2rem;
 }
 
 #import-img {
+	/* margin: 0 auto; */
 	width: 2rem;
 	height: 2rem;
 	padding-right: 1rem;
@@ -252,6 +256,7 @@ body.light-theme .info-textarea {
 .sort-by-div {
 	width: fit-content;
 	font-weight: bold;
+	text-align: center;
 	margin: 0 auto;
 	grid-template-columns: 1fr 1fr;
 	padding: 2rem;
@@ -358,17 +363,16 @@ body.light-theme .sort-by-div {
 	display: inline-block;
 }
 
-/* Cover */
 #cover {
 	text-align: center;
     padding-top: 5rem;
 }
-/* End Cover */
 
 input {
 	outline: none;
-  }
-  input[type=search] {
+}
+
+input[type=search] {
 	-webkit-appearance: textfield;
 	-webkit-box-sizing: content-box;
 	font-family: inherit;
@@ -440,6 +444,14 @@ input::-webkit-input-placeholder {
 	color: transparent;
 }
 
+#appicon {
+	padding-top: 2rem;
+}
+
+#back-btn-div {
+	margin: 0 auto;
+}
+
 @keyframes text_reveal_box {
 	50% {
 		width: 100%;
@@ -451,21 +463,44 @@ input::-webkit-input-placeholder {
 	}
 }
 
-@media all and (max-width: 1030px) {
-	table {
-		width: 90%;
+@media all and (max-width: 370px) {
+	h2 {
+		font-size: 2rem;
 	}
-	table th, table td {
-	  	font-size: smaller;
-	}
-	#chartdiv {
-		width: 90%;
-		font-size: smaller;
-	}
-}
 
-@media all and (max-width: 250px) {
-	h1 {
-		font-size: 1rem;
+	#medicine {
+		margin-left: 2rem;
+		margin-right: 2rem;
+	}
+
+	#sortby-select {
+		width: fit-content;
+		font-weight: bold;
+		margin: 0 auto;
+		display: table;
+	}
+
+	.sort-by-div label {
+		display: table;
+		padding-bottom: 1rem;
+		margin: 0 auto;
+	}
+
+	#back-btn-div {
+		display: flex;
+		justify-content: center;
+	}
+
+	#back-btn {
+		width: 5rem;
+		height: 5rem;
+	}
+
+	#add-medicine-img {
+		margin: 0 auto;
+	}
+
+	#cover {
+		padding-top: 3rem;
 	}
 }
