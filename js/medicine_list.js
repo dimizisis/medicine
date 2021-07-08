@@ -509,6 +509,7 @@ function showCreateMedicineSection(nameTxt = '', expirationDateTxt = '', stockCo
     var newMedicineDiv = document.createElement('div');
     newMedicineDiv.classList.add('element');
     newMedicineDiv.classList.add('rounded');
+    newMedicineDiv.classList.add('create-med');
     newMedicineDiv.id = 'new-medicine-div';
 
     /* Medicine Name */

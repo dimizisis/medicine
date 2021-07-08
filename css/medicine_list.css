@@ -10,8 +10,8 @@
 }
 
 html {
-    background-repeat: no-repeat;
-    background-attachment: fixed;
+	background-repeat: no-repeat;
+    background-attachment:local;
     background-size: cover;
     background-blend-mode: screen;
     min-height: 100%;
@@ -22,6 +22,7 @@ body {
 	position: relative;
 	min-height: 100%;
 	font-family: "Source Sans Pro", sans-serif;
+	padding: 2rem;
 }
 
 body.dark-theme {
@@ -61,10 +62,12 @@ body.light-theme .rounded{
 }
 
 .element.visible {
-	width: fit-content;
-	height: fit-content;
     opacity: 1;
     transform: scale(1, 1) translate(0, 0);
+}
+
+.create-med {
+	background: linear-gradient(to right, #d1d1d1, #c9d1e0);
 }
 
 .info-div {
@@ -179,8 +182,7 @@ img {
     display: flex;
     justify-content: space-between;
     width: fit-content;
-    margin-left: auto;
-    margin-right: auto;
+    margin: 0 auto;
 }
 
 h2 {
@@ -268,7 +270,7 @@ body.light-theme .info-textarea {
 	padding: 2rem;
 }
 
-body.dark-theme .sort-by-div {
+body.dark-theme .sort-by-div label {
 	color: white;
 }
 
@@ -347,6 +349,10 @@ body.light-theme .sort-by-div {
 	margin-bottom: 2rem;
 }
 
+label {
+	color: black;
+}
+
 .label-input-div {
 	display: flex;
 }
@@ -370,7 +376,10 @@ body.light-theme .sort-by-div {
 }
 
 #cover {
+	display: block;
+	margin: 0 auto;
 	text-align: center;
+	align-items: center;
     padding-top: 5rem;
 }
 
@@ -475,9 +484,9 @@ input::-webkit-input-placeholder {
 	}
 }
 
-@media all and (max-width: 370px) {
+@media all and (max-width: 460px) {
 	h2 {
-		font-size: 2rem;
+		font-size: 1rem;
 	}
 
 	#medicine {
@@ -506,6 +515,8 @@ input::-webkit-input-placeholder {
 	#back-btn {
 		width: 4rem;
 		height: 4rem;
+		padding-left: 0rem;
+		padding-top: 0rem;
 	}
 
 	#add-medicine-img {
@@ -514,10 +525,20 @@ input::-webkit-input-placeholder {
 
 	#cover {
 		padding-top: 3rem;
+		text-align: center;
 	}
 
 	#cover-icon {
 		width: 3rem;
 		height: 3rem;
+	}
+}
+
+@media all and (max-width: 350px) {
+	.button-div {
+		display: grid;
+		grid-auto-rows: 1fr;
+		grid-template-columns: 1fr;
+		align-items: center;
 	}
 }

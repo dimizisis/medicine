@@ -49,7 +49,7 @@ body.light-theme #change-theme-img {
 }
 
 body.dark-theme {
-	color: white;
+	color: black;
 	background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);;
 }
 
@@ -113,8 +113,14 @@ h2 {
 }
 
 .element.visible {
+	background: linear-gradient(to right, #d1d1d1, #c9d1e0);
     opacity: 1;
     transform: scale(1, 1) translate(0, 0);
+}
+
+.element.hidden {
+    opacity: 0;
+    pointer-events: none;
 }
 
 body.dark-theme h1 {
@@ -251,8 +257,23 @@ h3 {
 	}
 }
 
-@media all and (max-width: 250px) {
-	h1 {
+@media all and (max-width: 370px) {
+	h2 {
 		font-size: 2rem;
+	}
+
+	#add-profile-img {
+		margin: 0 auto;
+	}
+
+	#cover-icon {
+		width: 3rem;
+		height: 3rem;
+	}
+}
+
+@media all and (max-width: 470px) {
+	body {
+		padding: 2rem;
 	}
 }
