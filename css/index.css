@@ -26,6 +26,10 @@ body {
 	margin: 0%;
 }
 
+#profiles {
+	text-align: center;
+}
+
 body.dark-theme #change-theme-img {
 	border: 2px solid white;
 }
@@ -260,6 +264,7 @@ h3 {
 @media all and (max-width: 460px) {
 	.element.visible {
 		margin: 2rem;
+		display: inline-block;
 	}
 }
 
